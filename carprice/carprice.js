@@ -1,4 +1,4 @@
-//c: country: 0:Euro, 1:USA, 2:Japan, 3:other - no tax
+//c: country: 0:Euro, 1:USA, 2:Japan, 3:other - no import tax
 //v: volume: any number in lit
 //o: original price
 var cars = [{n:'Benz G65', o:217900, c:0, v:6}, {n:'Honda Jazz', o:19490, c:2, v:1.5}, {n:'Jeep wrangler', o:36995, c:1, v:3.6}, {n:'Chery QQ', o:6000, c:3, v:1}];
