@@ -8,7 +8,7 @@ function getCarPrice(id)
 {	
 	var country = cars[id].c, volume = cars[id].v, org = cars[id].o;
 	var r = [[1, 1.2, 2], [0.75, 0.9, 1.5], [0.7, 0.8, 1.35], [0, 0, 0]][country][(volume>5&&2)||(volume>2&&1)||0];
-	return Math.round((org + org*r + (org + org*r)*0.12)*47);
+	return Math.ceil((org + org*r + (org + org*r)*0.12)*47);
 }
 
 function main(){
