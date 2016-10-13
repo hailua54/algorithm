@@ -20,5 +20,7 @@ public class Main {
 		}
 		
 		app.testMoneyTransfer(args[0], args[1].equals("true"), infos);
+		Thread.sleep(3000);
+		System.exit(0);
 	}
 }

@@ -23,12 +23,9 @@ public class Application {
 			int[] info = (int[])transactions.get(i);
 			Runnable task = () -> 
 			{ 
-				try { 
-					if (isNormalTransfer) this.deadLockTransferMoney(info[0], info[1], info[2]);
-					else this.resolveTransferMoney(info[0], info[1], info[2]);
-				}
-				catch(Exception e) {} 
-					finally {this.trace("complete !");} 
+				if (isNormalTransfer) this.deadLockTransferMoney(info[0], info[1], info[2]);
+				else this.resolveTransferMoney(info[0], info[1], info[2]);
+				this.trace("complete !");
 			};
 			new Thread(task, "Thread " + i).start();
 		}
