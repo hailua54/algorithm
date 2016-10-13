@@ -8,7 +8,7 @@ public class Main {
 	{
 		if (args.length == 0) args = new String[]{"default_testcase", "true", "0,1,50;1,0,50"};
 		Application app = new Application();
-		System.out.println("start " + args[0]);
+		System.out.println("start " + args[0] + "...");
 		Object[] params = args[2].split(";");
 		ArrayList<Object> infos = new ArrayList<Object>();
 		for (int i = 0; i < params.length; i++) 
@@ -20,7 +20,7 @@ public class Main {
 		}
 		
 		app.testMoneyTransfer(args[0], args[1].equals("true"), infos);
-		Thread.sleep(3000);
+		Thread.sleep(2000);
 		System.exit(0);
 	}
 }
