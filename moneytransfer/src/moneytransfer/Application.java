@@ -20,12 +20,16 @@ public class Application {
 	{
 		for (int i = 0; i < transactions.size(); i++)
 		{
-			int[] info = (int[])transactions.get(i);
+			int[] trans = (int[])transactions.get(i);
 			Runnable task = () -> 
 			{ 
-				if (isNormalTransfer) this.deadLockTransferMoney(info[0], info[1], info[2]);
-				else this.resolveTransferMoney(info[0], info[1], info[2]);
-				this.trace("complete !");
+				try
+				{
+					if (isNormalTransfer) this.deadLockTransferMoney(trans[0], trans[1], trans[2]);
+					else this.resolveTransferMoney(trans[0], trans[1], trans[2]);
+				}
+				catch(Exception e){}
+				finally { this.trace("complete !"); }
 			};
 			new Thread(task, "Thread " + i).start();
 		}
