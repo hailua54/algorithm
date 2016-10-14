@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Application {
 	
-	protected NonThreadSafeDataBase db;
+	protected SimpleDataBase db;
 	protected HashMap<String, Object> lockHash;
 	// define all user id
 	protected int idA = 0, idB= 1, idC = 2;
@@ -13,7 +13,7 @@ public class Application {
 	public Application()
 	{
 		this.lockHash = new HashMap<String, Object>();
-		this.db = new NonThreadSafeDataBase();
+		this.db = new SimpleDataBase();
 	}
 	
 	public void testMoneyTransfer(String testcase, boolean isNormalTransfer, ArrayList<Object> transactions) throws InterruptedException
@@ -55,7 +55,7 @@ public class Application {
 		HashMap<String, Object> receivedAccount;
 		int sendBalance, receivedBalance;
 	
-		synchronized(this.getLock(Integer.toString(sendId)))
+		synchronized(this.getLock(Integer.toString(sendId))) // lock here to make sure no one else can modify the database for sender account
 		{
 			trace("lock send mutex");
 			trace("waiting for received mutex...");
@@ -66,7 +66,7 @@ public class Application {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			synchronized(this.getLock(Integer.toString(receivedId)))
+			synchronized(this.getLock(Integer.toString(receivedId))) // lock here to make sure no one else can modify the database for receiver account
 			{
 				sendAccount = this.db.readAccount(sendId);
 				if (sendAccount == null) return false;
