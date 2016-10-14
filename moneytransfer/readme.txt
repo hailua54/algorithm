@@ -1,5 +1,5 @@
 Require JDK 1.8.0
-Set Envireonment classpath to ..jdk1.8.0_101\bin
+Add to path to JDK ..jdk1.8.0_101\bin to Environment Variable PATH
 Run build.bat to build all class files
 For test cases: run testcases/runtestcases.bat
 Program arguments: String[] args
