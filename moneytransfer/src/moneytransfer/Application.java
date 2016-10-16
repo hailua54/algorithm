@@ -16,11 +16,11 @@ public class Application {
 		this.db = new SimpleDataBase();
 	}
 	
-	public void testMoneyTransfer(String testcase, boolean isNormalTransfer, ArrayList<Object> transactions) throws InterruptedException
+	public void testMoneyTransfer(String testcase, boolean isNormalTransfer, ArrayList<Object> transfers) throws InterruptedException
 	{
-		for (int i = 0; i < transactions.size(); i++)
+		for (int i = 0; i < transfers.size(); i++)
 		{
-			int[] trans = (int[])transactions.get(i);
+			int[] trans = (int[])transfers.get(i);
 			Runnable task = () -> 
 			{ 
 				try
@@ -29,7 +29,7 @@ public class Application {
 					else this.resolveTransferMoney(trans[0], trans[1], trans[2]);
 				}
 				catch(Exception e){}
-				finally { this.trace("complete !"); }
+				finally { this.trace("============= COMPLETE ============="); }
 			};
 			new Thread(task, "Thread " + i).start();
 		}
@@ -54,8 +54,8 @@ public class Application {
 		HashMap<String, Object> sendAccount;
 		HashMap<String, Object> receivedAccount;
 		int sendBalance, receivedBalance;
-	
-		synchronized(this.getLock(Integer.toString(sendId))) // lock here to make sure no one else can modify the database for sender account
+		// lock here to make sure no one else can modify the database for sender account
+		synchronized(this.getLock(Integer.toString(sendId)))
 		{
 			trace("lock send mutex");
 			trace("waiting for received mutex...");
@@ -66,7 +66,8 @@ public class Application {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			synchronized(this.getLock(Integer.toString(receivedId))) // lock here to make sure no one else can modify the database for receiver account
+			// lock here to make sure no one else can modify the database for receiver account
+			synchronized(this.getLock(Integer.toString(receivedId))) 
 			{
 				sendAccount = this.db.readAccount(sendId);
 				if (sendAccount == null) return false;

@@ -1,12 +1,16 @@
-IF EXIST "logs" rmdir /s "logs"
-mkdir "logs"
+IF NOT EXIST "logs" mkdir "logs"
+SET des="logs\testcase.log"
+SET source="..\bin"
+IF EXIST %des% DEL %des%
 
-java -cp ../bin moneytransfer.Main "testcase_1" "true" "0,1,50" >> "logs/testcase_1.log"
-java -cp ../bin moneytransfer.Main "testcase_2" "true" "1,0,50" >> "logs/testcase_2.log"
-java -cp ../bin moneytransfer.Main "testcase_3" "true" "0,1,50;1,0,50" >> "logs/testcase_3.log"
-java -cp ../bin moneytransfer.Main "testcase_4" "true" "0,1,50;1,2,50;2,0,50" >> "logs/testcase_4.log"
+java -cp %source% moneytransfer.Main "testcase_1" "true" "0,1,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_2" "true" "1,0,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_3" "true" "0,1,50;1,0,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_4" "true" "0,1,50;1,2,50;2,0,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_5" "true" "2,0,50;0,1,50;1,2,50;2,0,50;0,1,50;1,2,50" >> %des%
 
-java -cp ../bin moneytransfer.Main "testcase_5" "false" "0,1,50" >> "logs/testcase_5.log"
-java -cp ../bin moneytransfer.Main "testcase_6" "false" "1,0,50" >> "logs/testcase_6.log"
-java -cp ../bin moneytransfer.Main "testcase_7" "false" "0,1,50;1,0,50" >> "logs/testcase_7.log"
-java -cp ../bin moneytransfer.Main "testcase_8" "false" "0,1,50;1,2,50;2,0,50" >> "logs/testcase_8.log"
+java -cp %source% moneytransfer.Main "testcase_21" "false" "0,1,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_22" "false" "1,0,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_23" "false" "0,1,50;1,0,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_24" "false" "0,1,50;1,2,50;2,0,50" >> %des%
+java -cp %source% moneytransfer.Main "testcase_25" "false" "2,0,50;0,1,50;1,2,50;2,0,50;0,1,50;1,2,50" >> %des%

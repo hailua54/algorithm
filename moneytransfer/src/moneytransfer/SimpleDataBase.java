@@ -1,7 +1,10 @@
 package moneytransfer;
 import java.lang.Object;
 import java.util.HashMap;
-
+/**
+ * 
+ * Simple DataBase with read and write actions
+ */
 public class SimpleDataBase {
 	private Object[] accountTable;
 	private int MIN_BALANCE = 50;
