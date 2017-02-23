@@ -1,140 +1,98 @@
-start testcase_1 --------------------------
-normal transfer: true, transfer operators: 0,1,50
+start testcase_1
 Thread 0: lock send mutex
 Thread 0: waiting for received mutex...
 Thread 0: start transfering 50 from 0 to 1
 DataBase log: update balance successully for 0_A new balance: 50
 DataBase log: update balance successully for 1_B new balance: 250
-Thread 0: ============= COMPLETE =============
-end testcase: testcase_1 --------------------- 
-
-
-
-start testcase_2 --------------------------
-normal transfer: true, transfer operators: 1,0,50
+Thread 0: complete !
+start testcase_2
 Thread 0: lock send mutex
 Thread 0: waiting for received mutex...
 Thread 0: start transfering 50 from 1 to 0
 DataBase log: update balance successully for 1_B new balance: 150
 DataBase log: update balance successully for 0_A new balance: 150
-Thread 0: ============= COMPLETE =============
-end testcase: testcase_2 --------------------- 
-
-
-
-start testcase_3 --------------------------
-normal transfer: true, transfer operators: 0,1,50;1,0,50
+Thread 0: complete !
+start testcase_3
+Thread 0: lock send mutex
+Thread 1: lock send mutex
+Thread 0: waiting for received mutex...
+Thread 1: waiting for received mutex...
+start testcase_4
+Thread 2: lock send mutex
+Thread 2: waiting for received mutex...
 Thread 0: lock send mutex
 Thread 0: waiting for received mutex...
 Thread 1: lock send mutex
 Thread 1: waiting for received mutex...
-end testcase: testcase_3 --------------------- 
-
-
-
-start testcase_4 --------------------------
-normal transfer: true, transfer operators: 0,1,50;1,2,50;2,0,50
-Thread 0: lock send mutex
-Thread 0: waiting for received mutex...
+start testcase_5
 Thread 1: lock send mutex
 Thread 1: waiting for received mutex...
 Thread 2: lock send mutex
 Thread 2: waiting for received mutex...
-end testcase: testcase_4 --------------------- 
-
-
-
-start testcase_5 --------------------------
-normal transfer: true, transfer operators: 2,0,50;0,1,50;1,2,50;2,0,50;0,1,50;1,2,50
 Thread 0: lock send mutex
 Thread 0: waiting for received mutex...
-Thread 1: lock send mutex
-Thread 1: waiting for received mutex...
-Thread 2: lock send mutex
-Thread 2: waiting for received mutex...
-end testcase: testcase_5 --------------------- 
-
-
-
-start testcase_21 --------------------------
-normal transfer: false, transfer operators: 0,1,50
+start testcase_6
+Thread 0: lock send mutex
+Thread 0: waiting for received mutex...
+Thread 0: start transfering 200 from 0 to 1
+Thread 0: complete !
+start testcase_21
 Thread 0: start transfering 50 from 0 to 1...
 DataBase log: update balance successully for 0_A new balance: 50
 DataBase log: update balance successully for 1_B new balance: 250
-Thread 0: ============= COMPLETE =============
-end testcase: testcase_21 --------------------- 
-
-
-
-start testcase_22 --------------------------
-normal transfer: false, transfer operators: 1,0,50
+Thread 0: complete !
+start testcase_22
 Thread 0: start transfering 50 from 1 to 0...
 DataBase log: update balance successully for 1_B new balance: 150
 DataBase log: update balance successully for 0_A new balance: 150
-Thread 0: ============= COMPLETE =============
-end testcase: testcase_22 --------------------- 
-
-
-
-start testcase_23 --------------------------
-normal transfer: false, transfer operators: 0,1,50;1,0,50
+Thread 0: complete !
+start testcase_23
 Thread 0: start transfering 50 from 0 to 1...
-DataBase log: update balance successully for 0_A new balance: 50
-DataBase log: update balance successully for 1_B new balance: 250
 Thread 1: start transfering 50 from 1 to 0...
-Thread 0: ============= COMPLETE =============
+DataBase log: update balance successully for 0_A new balance: 50
+DataBase log: update balance successully for 1_B new balance: 150
 DataBase log: update balance successully for 1_B new balance: 200
+Thread 0: complete !
 DataBase log: update balance successully for 0_A new balance: 100
-Thread 1: ============= COMPLETE =============
-end testcase: testcase_23 --------------------- 
-
-
-
-start testcase_24 --------------------------
-normal transfer: false, transfer operators: 0,1,50;1,2,50;2,0,50
+Thread 1: complete !
+start testcase_24
 Thread 0: start transfering 50 from 0 to 1...
 DataBase log: update balance successully for 0_A new balance: 50
-DataBase log: update balance successully for 1_B new balance: 250
-Thread 0: ============= COMPLETE =============
 Thread 1: start transfering 50 from 1 to 2...
-DataBase log: update balance successully for 1_B new balance: 200
-DataBase log: update balance successully for 2_C new balance: 350
-Thread 1: ============= COMPLETE =============
 Thread 2: start transfering 50 from 2 to 0...
-DataBase log: update balance successully for 2_C new balance: 300
-DataBase log: update balance successully for 0_A new balance: 100
-Thread 2: ============= COMPLETE =============
-end testcase: testcase_24 --------------------- 
-
-
-
-start testcase_25 --------------------------
-normal transfer: false, transfer operators: 2,0,50;0,1,50;1,2,50;2,0,50;0,1,50;1,2,50
-Thread 0: start transfering 50 from 2 to 0...
+DataBase log: update balance successully for 1_B new balance: 250
+Thread 0: complete !
 DataBase log: update balance successully for 2_C new balance: 250
-DataBase log: update balance successully for 0_A new balance: 150
-Thread 0: ============= COMPLETE =============
-Thread 1: start transfering 50 from 0 to 1...
-Thread 3: start transfering 50 from 2 to 0...
-Thread 4: start transfering 50 from 0 to 1...
-Thread 2: start transfering 50 from 1 to 2...
-Thread 5: start transfering 50 from 1 to 2...
 DataBase log: update balance successully for 0_A new balance: 100
-DataBase log: update balance successully for 1_B new balance: 150
-DataBase log: update balance successully for 2_C new balance: 200
+Thread 2: complete !
 DataBase log: update balance successully for 1_B new balance: 200
-Thread 1: ============= COMPLETE =============
+DataBase log: update balance successully for 2_C new balance: 300
+Thread 1: complete !
+start testcase_25
+Thread 1: start transfering 50 from 0 to 1...
+Thread 2: start transfering 50 from 1 to 2...
 DataBase log: update balance successully for 0_A new balance: 50
 DataBase log: update balance successully for 1_B new balance: 150
-DataBase log: update balance successully for 2_C new balance: 250
-Thread 2: ============= COMPLETE =============
 DataBase log: update balance successully for 1_B new balance: 200
-Thread 4: ============= COMPLETE =============
+Thread 1: complete !
+DataBase log: update balance successully for 2_C new balance: 350
+Thread 2: complete !
+Thread 4: start transfering 50 from 0 to 1...
+Thread 5: start transfering 50 from 1 to 2...
+Thread 4: complete !
+DataBase log: update balance successully for 1_B new balance: 150
+DataBase log: update balance successully for 2_C new balance: 400
+Thread 5: complete !
+Thread 0: start transfering 50 from 2 to 0...
+DataBase log: update balance successully for 2_C new balance: 350
 DataBase log: update balance successully for 0_A new balance: 100
-Thread 3: ============= COMPLETE =============
+Thread 0: complete !
+Thread 3: start transfering 50 from 2 to 0...
 DataBase log: update balance successully for 2_C new balance: 300
-Thread 5: ============= COMPLETE =============
-end testcase: testcase_25 --------------------- 
-
-
-
+DataBase log: update balance successully for 0_A new balance: 150
+Thread 3: complete !
+start testcase_26
+Thread 0: lock send mutex
+Thread 0: waiting for received mutex...
+Thread 0: start transfering 200 from 0 to 1
+Thread 0: complete !
