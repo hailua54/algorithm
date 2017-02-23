@@ -1,2 +1,2 @@
 #OpenGL
-	(https://github.com/bennyk/SmoothDrawing-x)
+	https://github.com/bennyk/SmoothDrawing-x
