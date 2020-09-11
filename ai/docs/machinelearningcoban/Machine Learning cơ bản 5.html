@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)https://machinelearningcoban.com/2017/01/04/kmeans2/ -->
+<html><head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Machine Learning cơ bản</title>
+  <link rel="stylesheet" href="./Machine Learning cơ bản 5_files/bootstrap.min.css">
+  <script type="text/javascript" async="" src="./Machine Learning cơ bản 5_files/analytics.js.download"></script><script id="facebook-jssdk" src="./Machine Learning cơ bản 5_files/sdk.js.download"></script><script async="" src="./Machine Learning cơ bản 5_files/gtm.js.download"></script><script async="" src="./Machine Learning cơ bản 5_files/analytics.js.download"></script><script src="./Machine Learning cơ bản 5_files/jquery.min.js.download"></script>
+  <script src="./Machine Learning cơ bản 5_files/bootstrap.min.js.download"></script>
+  <link href="./Machine Learning cơ bản 5_files/css" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> -->
+  <link href="./Machine Learning cơ bản 5_files/css(1)" rel="stylesheet">
+  <link href="./Machine Learning cơ bản 5_files/css(2)" rel="stylesheet">
+  <link href="./Machine Learning cơ bản 5_files/css(3)" rel="stylesheet">
+
+<!-- Include CSS SCSS -->
+
+   <link rel="stylesheet" type="text/css" href="./Machine Learning cơ bản 5_files/post.css">
+   <link rel="stylesheet" type="text/css" href="./Machine Learning cơ bản 5_files/monokai.css">
+   <link rel="stylesheet" type="text/css" href="./Machine Learning cơ bản 5_files/mystyle.css">
+   <!-- <link rel="stylesheet" type="text/css" href="/css/github.css" /> -->
+
+
+<title>Bài 5: K-means Clustering: Simple Applications</title>
+<!-- <script>
+var pageProperties = {
+    
+    category: "Clustering",
+    
+    url: "/2017/01/04/kmeans2/",
+    title: "Bài 5: K-means Clustering: Simple Applications",
+    scripts: [
+        
+    ],
+};
+
+</script>
+<script src="/scripts/modules.js" async></script>
+ -->
+
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/tiepvupsu/tiepvupsu.github.io/master/assets/latex/new_logo9.png" sizes="32x32">
+<link rel="canonical" href="https://machinelearningcoban.com/2017/01/04/kmeans2/">
+<meta name="author" content="Tiep Vu ">
+
+
+   <meta property="og:title" content="Bài 5: K-means Clustering: Simple Applications">
+   <meta property="og:site_name" content="Tiep Vu&#39;s blog">
+   <meta property="og:url" content="https://machinelearningcoban.com/2017/01/04/kmeans2/">
+   <meta property="og:description" content="">
+   
+   <meta property="og:type" content="article">
+   <meta property="article:published_time" content="2017-01-04">
+   
+
+   <meta property="article:author" content="Tiep Vu">
+   <meta property="article:section" content="Clustering">
+   
+      <meta property="article:tag" content="Clustering">
+   
+      <meta property="article:tag" content="Kmeans">
+   
+      <meta property="article:tag" content="Unsupervised-learning">
+   
+      <meta property="article:tag" content="MNIST">
+   
+
+
+<link rel="alternate" type="application/atom+xml" title="Tiep Vu&#39;s blog - Atom feed" href="https://machinelearningcoban.com/feed.xml">
+
+
+
+<!-- Google Analytics -->
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-89509207-1', 'auto');
+// ga('send', 'pageview');
+ga('send', 'pageview', {
+'page': '/2017/01/04/kmeans2/',
+'title': 'Bài 5: K-means Clustering: Simple Applications'
+});
+</script>
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KTCD8BX');</script>
+<!-- End Google Tag Manager -->
+<script type="text/javascript" async="" src="./Machine Learning cơ bản 5_files/embed.js.download"></script><link rel="preload" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.04dd90af7bc65bdd97911fd885cc83a9.css"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.4d4c2bb66cc9fcd5a16c7ff1c1fbbe79.js"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.fef702bed571136dc98b1dd41e1b906f.js"><link rel="preload" as="script" href="https://disqus.com/next/config.js"><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent}.fb_dialog_close_icon:active{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent}.fb_dialog_loader{background-color:#f5f6f7;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{width:auto;height:auto;min-height:initial;min-width:initial;background:none}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{color:#fff;display:block;padding-top:20px;clear:both;font-size:18px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;bottom:0;left:0;right:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_mobile .fb_dialog_iframe{position:-webkit-sticky;top:0}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29487d;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f5f6f7;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-repeat:no-repeat;background-position:50% 50%;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}
+.fb_customer_chat_bounce_in_v2{animation-duration:300ms;animation-name:fb_bounce_in_v2;transition-timing-function:ease-in}.fb_customer_chat_bounce_out_v2{animation-duration:300ms;animation-name:fb_bounce_out_v2;transition-timing-function:ease-in}.fb_customer_chat_bounce_in_v2_mobile_chat_started{animation-duration:300ms;animation-name:fb_bounce_in_v2_mobile_chat_started;transition-timing-function:ease-in}.fb_customer_chat_bounce_out_v2_mobile_chat_started{animation-duration:300ms;animation-name:fb_bounce_out_v2_mobile_chat_started;transition-timing-function:ease-in}.fb_customer_chat_bubble_pop_in{animation-duration:250ms;animation-name:fb_customer_chat_bubble_bounce_in_animation}.fb_customer_chat_bubble_animated_no_badge{box-shadow:0 3px 12px rgba(0, 0, 0, .15);transition:box-shadow 150ms linear}.fb_customer_chat_bubble_animated_no_badge:hover{box-shadow:0 5px 24px rgba(0, 0, 0, .3)}.fb_customer_chat_bubble_animated_with_badge{box-shadow:-5px 4px 14px rgba(0, 0, 0, .15);transition:box-shadow 150ms linear}.fb_customer_chat_bubble_animated_with_badge:hover{box-shadow:-5px 8px 24px rgba(0, 0, 0, .2)}.fb_invisible_flow{display:inherit;height:0;overflow-x:hidden;width:0}.fb_mobile_overlay_active{background-color:#fff;height:100%;overflow:hidden;position:fixed;visibility:hidden;width:100%}@keyframes fb_bounce_in_v2{0%{opacity:0;transform:scale(0, 0);transform-origin:bottom right}50%{transform:scale(1.03, 1.03);transform-origin:bottom right}100%{opacity:1;transform:scale(1, 1);transform-origin:bottom right}}@keyframes fb_bounce_in_v2_mobile_chat_started{0%{opacity:0;top:20px}100%{opacity:1;top:0}}@keyframes fb_bounce_out_v2{0%{opacity:1;transform:scale(1, 1);transform-origin:bottom right}100%{opacity:0;transform:scale(0, 0);transform-origin:bottom right}}@keyframes fb_bounce_out_v2_mobile_chat_started{0%{opacity:1;top:0}100%{opacity:0;top:20px}}@keyframes fb_customer_chat_bubble_bounce_in_animation{0%{bottom:6pt;opacity:0;transform:scale(0, 0);transform-origin:center}70%{bottom:18pt;opacity:1;transform:scale(1.2, 1.2)}100%{transform:scale(1, 1)}}</style><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">.mjx-chtml {display: inline-block; line-height: 0; text-indent: 0; text-align: left; text-transform: none; font-style: normal; font-weight: normal; font-size: 100%; font-size-adjust: none; letter-spacing: normal; word-wrap: normal; word-spacing: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; margin: 0; padding: 1px 0}
+.MJXc-display {display: block; text-align: center; margin: 1em 0; padding: 0}
+.mjx-chtml[tabindex]:focus, body :focus .mjx-chtml[tabindex] {display: inline-table}
+.mjx-full-width {text-align: center; display: table-cell!important; width: 10000em}
+.mjx-math {display: inline-block; border-collapse: separate; border-spacing: 0}
+.mjx-math * {display: inline-block; -webkit-box-sizing: content-box!important; -moz-box-sizing: content-box!important; box-sizing: content-box!important; text-align: left}
+.mjx-numerator {display: block; text-align: center}
+.mjx-denominator {display: block; text-align: center}
+.MJXc-stacked {height: 0; position: relative}
+.MJXc-stacked > * {position: absolute}
+.MJXc-bevelled > * {display: inline-block}
+.mjx-stack {display: inline-block}
+.mjx-op {display: block}
+.mjx-under {display: table-cell}
+.mjx-over {display: block}
+.mjx-over > * {padding-left: 0px!important; padding-right: 0px!important}
+.mjx-under > * {padding-left: 0px!important; padding-right: 0px!important}
+.mjx-stack > .mjx-sup {display: block}
+.mjx-stack > .mjx-sub {display: block}
+.mjx-prestack > .mjx-presup {display: block}
+.mjx-prestack > .mjx-presub {display: block}
+.mjx-delim-h > .mjx-char {display: inline-block}
+.mjx-surd {vertical-align: top}
+.mjx-mphantom * {visibility: hidden}
+.mjx-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 2px 3px; font-style: normal; font-size: 90%}
+.mjx-annotation-xml {line-height: normal}
+.mjx-menclose > svg {fill: none; stroke: currentColor}
+.mjx-mtr {display: table-row}
+.mjx-mlabeledtr {display: table-row}
+.mjx-mtd {display: table-cell; text-align: center}
+.mjx-label {display: table-row}
+.mjx-box {display: inline-block}
+.mjx-block {display: block}
+.mjx-span {display: inline}
+.mjx-char {display: block; white-space: pre}
+.mjx-itable {display: inline-table; width: auto}
+.mjx-row {display: table-row}
+.mjx-cell {display: table-cell}
+.mjx-table {display: table; width: 100%}
+.mjx-line {display: block; height: 0}
+.mjx-strut {width: 0; padding-top: 1em}
+.mjx-vsize {width: 0}
+.MJXc-space1 {margin-left: .167em}
+.MJXc-space2 {margin-left: .222em}
+.MJXc-space3 {margin-left: .278em}
+.mjx-chartest {display: block; visibility: hidden; position: absolute; top: 0; line-height: normal; font-size: 500%}
+.mjx-chartest .mjx-char {display: inline}
+.mjx-chartest .mjx-box {padding-top: 1000px}
+.MJXc-processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MJXc-processed {display: none}
+.mjx-test {display: block; font-style: normal; font-weight: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-transform: none; letter-spacing: normal; word-spacing: normal; overflow: hidden; height: 1px}
+.mjx-ex-box-test {position: absolute; width: 1px; height: 60ex}
+.mjx-line-box-test {display: table!important}
+.mjx-line-box-test span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+#MathJax_CHTML_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.mjx-chtml .mjx-noError {line-height: 1.2; vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+.MJXc-TeX-unknown-R {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: normal; font-weight: normal}
+.MJXc-TeX-unknown-I {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: italic; font-weight: normal}
+.MJXc-TeX-unknown-B {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: normal; font-weight: bold}
+.MJXc-TeX-unknown-BI {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: italic; font-weight: bold}
+.MJXc-TeX-ams-R {font-family: MJXc-TeX-ams-R,MJXc-TeX-ams-Rw}
+.MJXc-TeX-cal-B {font-family: MJXc-TeX-cal-B,MJXc-TeX-cal-Bx,MJXc-TeX-cal-Bw}
+.MJXc-TeX-frak-R {font-family: MJXc-TeX-frak-R,MJXc-TeX-frak-Rw}
+.MJXc-TeX-frak-B {font-family: MJXc-TeX-frak-B,MJXc-TeX-frak-Bx,MJXc-TeX-frak-Bw}
+.MJXc-TeX-math-BI {font-family: MJXc-TeX-math-BI,MJXc-TeX-math-BIx,MJXc-TeX-math-BIw}
+.MJXc-TeX-sans-R {font-family: MJXc-TeX-sans-R,MJXc-TeX-sans-Rw}
+.MJXc-TeX-sans-B {font-family: MJXc-TeX-sans-B,MJXc-TeX-sans-Bx,MJXc-TeX-sans-Bw}
+.MJXc-TeX-sans-I {font-family: MJXc-TeX-sans-I,MJXc-TeX-sans-Ix,MJXc-TeX-sans-Iw}
+.MJXc-TeX-script-R {font-family: MJXc-TeX-script-R,MJXc-TeX-script-Rw}
+.MJXc-TeX-type-R {font-family: MJXc-TeX-type-R,MJXc-TeX-type-Rw}
+.MJXc-TeX-cal-R {font-family: MJXc-TeX-cal-R,MJXc-TeX-cal-Rw}
+.MJXc-TeX-main-B {font-family: MJXc-TeX-main-B,MJXc-TeX-main-Bx,MJXc-TeX-main-Bw}
+.MJXc-TeX-main-I {font-family: MJXc-TeX-main-I,MJXc-TeX-main-Ix,MJXc-TeX-main-Iw}
+.MJXc-TeX-main-R {font-family: MJXc-TeX-main-R,MJXc-TeX-main-Rw}
+.MJXc-TeX-math-I {font-family: MJXc-TeX-math-I,MJXc-TeX-math-Ix,MJXc-TeX-math-Iw}
+.MJXc-TeX-size1-R {font-family: MJXc-TeX-size1-R,MJXc-TeX-size1-Rw}
+.MJXc-TeX-size2-R {font-family: MJXc-TeX-size2-R,MJXc-TeX-size2-Rw}
+.MJXc-TeX-size3-R {font-family: MJXc-TeX-size3-R,MJXc-TeX-size3-Rw}
+.MJXc-TeX-size4-R {font-family: MJXc-TeX-size4-R,MJXc-TeX-size4-Rw}
+@font-face {font-family: MJXc-TeX-ams-R; src: local('MathJax_AMS'), local('MathJax_AMS-Regular')}
+@font-face {font-family: MJXc-TeX-ams-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_AMS-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_AMS-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_AMS-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-cal-B; src: local('MathJax_Caligraphic Bold'), local('MathJax_Caligraphic-Bold')}
+@font-face {font-family: MJXc-TeX-cal-Bx; src: local('MathJax_Caligraphic'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-cal-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Caligraphic-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-frak-R; src: local('MathJax_Fraktur'), local('MathJax_Fraktur-Regular')}
+@font-face {font-family: MJXc-TeX-frak-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Fraktur-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Fraktur-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-frak-B; src: local('MathJax_Fraktur Bold'), local('MathJax_Fraktur-Bold')}
+@font-face {font-family: MJXc-TeX-frak-Bx; src: local('MathJax_Fraktur'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-frak-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Fraktur-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Fraktur-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-math-BI; src: local('MathJax_Math BoldItalic'), local('MathJax_Math-BoldItalic')}
+@font-face {font-family: MJXc-TeX-math-BIx; src: local('MathJax_Math'); font-weight: bold; font-style: italic}
+@font-face {font-family: MJXc-TeX-math-BIw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Math-BoldItalic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Math-BoldItalic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Math-BoldItalic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-R; src: local('MathJax_SansSerif'), local('MathJax_SansSerif-Regular')}
+@font-face {font-family: MJXc-TeX-sans-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-B; src: local('MathJax_SansSerif Bold'), local('MathJax_SansSerif-Bold')}
+@font-face {font-family: MJXc-TeX-sans-Bx; src: local('MathJax_SansSerif'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-sans-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-I; src: local('MathJax_SansSerif Italic'), local('MathJax_SansSerif-Italic')}
+@font-face {font-family: MJXc-TeX-sans-Ix; src: local('MathJax_SansSerif'); font-style: italic}
+@font-face {font-family: MJXc-TeX-sans-Iw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Italic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Italic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-script-R; src: local('MathJax_Script'), local('MathJax_Script-Regular')}
+@font-face {font-family: MJXc-TeX-script-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Script-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Script-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Script-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-type-R; src: local('MathJax_Typewriter'), local('MathJax_Typewriter-Regular')}
+@font-face {font-family: MJXc-TeX-type-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Typewriter-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Typewriter-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Typewriter-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-cal-R; src: local('MathJax_Caligraphic'), local('MathJax_Caligraphic-Regular')}
+@font-face {font-family: MJXc-TeX-cal-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Caligraphic-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-B; src: local('MathJax_Main Bold'), local('MathJax_Main-Bold')}
+@font-face {font-family: MJXc-TeX-main-Bx; src: local('MathJax_Main'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-main-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Main-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-I; src: local('MathJax_Main Italic'), local('MathJax_Main-Italic')}
+@font-face {font-family: MJXc-TeX-main-Ix; src: local('MathJax_Main'); font-style: italic}
+@font-face {font-family: MJXc-TeX-main-Iw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Main-Italic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-R; src: local('MathJax_Main'), local('MathJax_Main-Regular')}
+@font-face {font-family: MJXc-TeX-main-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Main-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-math-I; src: local('MathJax_Math Italic'), local('MathJax_Math-Italic')}
+@font-face {font-family: MJXc-TeX-math-Ix; src: local('MathJax_Math'); font-style: italic}
+@font-face {font-family: MJXc-TeX-math-Iw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Math-Italic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size1-R; src: local('MathJax_Size1'), local('MathJax_Size1-Regular')}
+@font-face {font-family: MJXc-TeX-size1-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Size1-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size2-R; src: local('MathJax_Size2'), local('MathJax_Size2-Regular')}
+@font-face {font-family: MJXc-TeX-size2-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Size2-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size3-R; src: local('MathJax_Size3'), local('MathJax_Size3-Regular')}
+@font-face {font-family: MJXc-TeX-size3-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Size3-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size4-R; src: local('MathJax_Size4'), local('MathJax_Size4-Regular')}
+@font-face {font-family: MJXc-TeX-size4-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/eot/MathJax_Size4-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf') format('opentype')}
+</style><script src="./Machine Learning cơ bản 5_files/alfalfa.4a5fcca1fe50a757044dfd331b660625.js.download" async="" charset="UTF-8"></script></head>
+
+<body><div id="MathJax_Message" style="display: none;"></div>
+	<div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_https" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./Machine Learning cơ bản 5_files/mp2v3DK3INU.html" style="border: none;"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+    <br>
+    <div class="container">
+      	<div class="row">
+	        <div class="col-md-2 hidden-xs hidden-sm">
+	          	<a href="https://machinelearningcoban.com/">
+            <!-- <img width="80%" src="/images/logo.svg" /> -->
+            <!-- <img width="100%" src="/images/logoTet.png" /> -->
+            <!-- <img width="100%" src="/images/logo2.png" /> -->
+            <!-- <img width="100%" style="padding-bottom: 3mm;" src="/images/logo_new.png" /> </a> -->
+            <img width="100%" style="padding-bottom: 3mm;" src="./Machine Learning cơ bản 5_files/new_logo92.png"> </a>
+          <!-- <img width="100%" style="padding-bottom: 3mm;" src="/assets/latex/new_logo2_rau.png" /> </a> -->
+
+            <br>
+            <a href="https://machinelearningcoban.com/buymeacoffee">
+            <img width="100%" style="padding-bottom: 3mm;" src="./Machine Learning cơ bản 5_files/Buymeacoffee_blue.png">
+
+            <br>
+            </a><a href="https://machinelearningcoban.com/ebook">
+            <img width="100%" style="padding-bottom: 3mm;" src="./Machine Learning cơ bản 5_files/ebook_logo.png">
+
+
+            <!-- <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Buy Me a Coffee', '#074B80', 
+            'A40822MV');kofiwidget2.draw();</script>  --><!-- 
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_donations">
+            <input type="hidden" name="business" value="vuhuutiep@gmail.com">
+            <input type="hidden" name="lc" value="US">
+            <input type="hidden" name="item_name" value="I find machinelearningcoban.com helpful. I'd like to buy Tiep Vu a coffee ^^. (Thank you so much for your support.)">
+            <input type="hidden" name="no_note" value="0">
+            <input type="hidden" name="currency_code" value="USD">
+            <input type="hidden" name="bn" value="PP-DonationsBF:Buymeacoffee.png:NonHostedGuest">
+            <input type="image" src="/images/Buymeacoffee_blue.png" border="0" style="padding-bottom: -9mm;" width = 100% name="submit" alt="PayPal - The safer, easier way to pay online!">
+            </form> -->
+
+            <!-- <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Buy Me a Coffee', '#805007', 'A40822MV');kofiwidget2.draw();</script>  -->
+
+          </a>
+
+          <!-- Google search -->
+         <!--  <table border="0">
+          <div id = "top-widget" style="width: 292px; margin-left: -13.5px; margin-top: -10px; margin-bottom: -15px;">
+         <script>
+           (function() {
+             var cx = '012053542614118746585:ktgei4l2oek';
+             var gcse = document.createElement('script');
+             gcse.type = 'text/javascript';
+             gcse.async = true;
+             gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+             var s = document.getElementsByTagName('script')[0];
+             s.parentNode.insertBefore(gcse, s);
+           })();
+         </script>
+         <gcse:search></gcse:search>
+          </div>
+          </table> -->
+
+          <!-- <nav>
+          
+            <div class="header">Popular</div>
+            <ul>
+              <li> (**): > 10k views</li>
+              <li> (*) : > 5k views</li>
+            </ul>
+          </nav> -->
+          
+
+          
+          <nav>
+          
+            <div class="header">Latest by category</div>
+            <ul>
+              
+                
+              
+                
+              
+                
+                  
+                    <li><a style="text-align: left; color: #074B80;" href="https://machinelearningcoban.com/2017/01/04/kmeans2/">5. K-means Clustering - Applications</a></li>
+                  
+                    <li><a style="text-align: left; color: #074B80;" href="https://machinelearningcoban.com/2017/01/01/kmeans/">4. K-means Clustering</a></li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+          </nav>
+          
+
+
+
+          <nav>
+            <div class="header">Latest</div>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/09/11/forum/">Diễn đàn</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/07/06/deeplearning/">36. Keras</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/06/22/deeplearning/">35. Lược sử Deep Learning</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/03/22/phuonghoagiang/">Con đường học Khoa học dữ liệu của một sinh viên Kinh tế</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/03/09/book/">Sách ML cơ bản</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/01/14/id3/">34. Decision Trees (1): ID3</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/08/31/evaluation/">33. Đánh giá hệ thống phân lớp</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/10/20/fundaml_vectors/">FundaML 3: Các mảng ngẫu nhiên</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/10/20/fundaml_matrices/">FundaML 2: Ma trận</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/10/12/fundaml_vectors/">FundaML 1: Mảng một chiều</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/09/24/fundaml/">FundaML.com</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/08/08/nbc/">32. Naive Bayes Classifier</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/08/05/phdlife/">Viết và nhận xét các bài báo khoa học</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/07/17/mlemap/">31. Maximum Likelihood và Maximum A Posteriori</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/lifesofar/">Con đường học Toán của tôi</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/07/09/prob/">30. Ôn tập Xác Suất</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/07/02/tl/">Q2. Transfer Learning</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/30/lda/">29. Linear Discriminant Analysis</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/22/qns1/">Q1. Quick Notes 1</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/21/pca2/">28. Principal Component Analysis (2/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/15/pca/">27. Principal Component Analysis (1/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/07/svd/">26. Singular Value Decomposition</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/05/31/matrixfactorization/">25. Matrix Factorization Collaborative Filtering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/05/24/collaborativefiltering/">24. Neighborhood-Based Collaborative Filtering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/05/17/contentbasedrecommendersys/">23. Content-based Recommendation Systems</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/28/multiclasssmv/">22. Multi-class SVM</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/22/kernelsmv/">21. Kernel SVM</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/13/softmarginsmv/">20. Soft Margin SVM</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/09/smv/">19. Support Vector Machine</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/02/duality/">18. Duality</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/03/19/convexopt/">17. Convex Optimization Problems</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/03/12/convexity/">16. Convex sets và convex functions</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/03/04/overfitting/">15. Overfitting</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/24/mlp/">14. Multi-layer Perceptron và Backpropagation</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/17/softmax/">13. Softmax Regression</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/11/binaryclassifiers/">12. Binary Classifiers</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/general/2017/02/06/featureengineering/">11. Feature Engineering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/02/howdoIcreatethisblog/"></a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/27/logisticregression/">10. Logistic Regression</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/21/perceptron/">9. Perceptron Learning Algorithm</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/16/gradientdescent2/">8. Gradient Descent (2/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/12/gradientdescent/">7. Gradient Descent (1/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/08/knn/">6. K-nearest neighbors</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/04/kmeans2/">5. K-means Clustering - Applications</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/01/kmeans/">4. K-means Clustering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2016/12/28/linearregression/">3. Linear Regression</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2016/12/27/categories/">2. Phân nhóm các thuật toán Machine Learning</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2016/12/26/introduce/">1. Giới thiệu về Machine Learning</a></li>
+              
+            
+          </nav>
+
+          
+          
+          <!-- <img style = "transform: scaleX(1); width:100%; margin-left:00px;position: absolute;" src = "/images/mai.jpg"> -->
+         
+         <!--   
+            <nav>
+              <div class="header">Previous by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #074B80;" href="/2017/01/01/kmeans/">Bài 4: K-means Clustering</a></li>
+              </ul>
+            </nav>
+           
+           
+            <nav>
+              <div class="header">Next by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #074B80;" href="/2017/01/08/knn/">Bài 6: K-nearest neighbors</a></li>
+              </ul>
+            </nav>
+            -->
+		       
+	        </div>
+	        <div class="col-md-8 col-xs-12" style="z-index: 1">
+	        	 <!-- <br> -->
+ <nav class="navbar navbar-inverse" style="background-color: #074B80">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span> 
+      </button>
+      <a class="navbar-brand" href="https://machinelearningcoban.com/"><span style="color: #fff">Machine Learning cơ bản</span></a>
+        <!-- <form class="navbar-form navbar-left" role="search">
+            <div class="form-group" align="right">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">
+                <span></span>
+            </button>
+        </form> -->
+        
+
+
+    </div>
+    <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="https://machinelearningcoban.com/about/"><span style="color: #fff"> About</span></a></li>
+        <li><a href="https://machinelearningcoban.com/index/"><span style="color: #fff">Index</span></a></li>
+        <li><a href="https://machinelearningcoban.com/tags/"><span style="color: #fff">Tags</span></a></li>
+        <li><a href="https://machinelearningcoban.com/categories/"><span style="color: #fff">Categories</span></a></li>
+        <li><a href="https://machinelearningcoban.com/archive/"><span style="color: #fff">Archive</span></a></li>
+        <li><a href="https://machinelearningcoban.com/math/"><span style="color: #fff">Math</span></a></li>
+        <!-- <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScq3GkxM1I2fDevR7gth-O9QqxM7grf4AFc0WT1hFORv4flaw/viewform"><span style = "color: #fff">Survey</span></a></li> -->
+        <li><a href="https://machinelearningcoban.com/copyrights/"><span style="color: #fff">Copyrights</span></a></li>
+        <!-- <li><a href="/faqs/"><span style = "color: #fff">FAQs</span></a></li> -->
+        <li><a href="https://machinelearningcoban.com/ebook/"><span style="color: #fff">ebook</span></a></li>
+        <li><a href="https://machinelearningcoban.com/search/"><span style="color: #fff">Search</span></a></li>
+        <!-- <li><a href="https://github.com/tiepvupsu/tiepvupsu.github.io/blob/master/assets/latex/book.pdf"><span style = "color: #fff">Book</span></a></li> -->
+        <!-- <li><a href="https://www.facebook.com/groups/257768141347267/"><span style = "color: #fff">Forum</span></a></li> -->
+        <!-- <li><a href="/subscribe/">Subscribe</a></li> -->
+
+        <li> 
+      </li></ul>
+    </div>
+  </div>
+</nav>
+
+	            <!-- <div class = "row"> -->
+   <!-- <div class = "col-xs-12 hidden-md hidden-lg"> -->
+      <!-- previous and next posts -->
+      <div class="PageNavigation">
+         
+            <a class="prev" style="color: #074B80;" href="https://machinelearningcoban.com/2017/01/01/kmeans/">« Bài 4: K-means Clustering</a>
+         <!-- <hr> -->
+         
+         
+            <a class="next" style="float: right; color: #074B80;" href="https://machinelearningcoban.com/2017/01/08/knn/">Bài 6: K-nearest neighbors »</a>
+         <hr>
+         
+      </div>
+  <!-- </div> -->
+<!-- </div> -->
+<h1 itemprop="name" class="post-title">Bài 5: K-means Clustering: Simple Applications</h1>
+
+
+<ul class="tags">
+   
+      <a href="https://machinelearningcoban.com/tags#Clustering" class="tag">Clustering</a>
+   
+      <a href="https://machinelearningcoban.com/tags#Kmeans" class="tag">Kmeans</a>
+   
+      <a href="https://machinelearningcoban.com/tags#Unsupervised-learning" class="tag">Unsupervised-learning</a>
+   
+      <a href="https://machinelearningcoban.com/tags#MNIST" class="tag">MNIST</a>
+   
+</ul>
+
+
+
+<span class="post-date" style="color: gray; font-style: italic;">Jan 4, 2017
+            </span>
+<!-- Main content -->
+<br>
+<br>
+
+
+
+<div itemprop="articleBody">
+   <!-- <div class="imgcap">
+<div >
+<a href = "/2017/01/04/kmeans2/">
+    <img src ="/assets/kmeans/girl_all.png"  width = "800"></a>
+</div>
+<div class="thecap"> Nén ảnh đơn giản với K-means clustering<br></div>
+</div> -->
+
+<p>Trong bài này, tôi sẽ áp dụng thuật toán <a href="https://machinelearningcoban.com/2017/01/01/kmeans/">K-means clustering</a> vào ba bài toán xử lý ảnh thực tế hơn: i) Phân nhóm các chữ số viết tay, ii) Tách vật thể (image segmentation) và iii) Nén ảnh/dữ liệu (image compression). Qua đây, tôi cũng muốn độc giả  làm quen với một số kỹ thuật đơn giản trong xử lý hình ảnh - một mảng quan trọng trong Machine Learning. Souce code cho các ví dụ trong trang này có thể được tìm thấy <a href="https://github.com/tiepvupsu/tiepvupsu.github.io/blob/master/assets/kmeans/Kmeans2.ipynb">tại đây</a>.</p>
+
+<p><strong>Cảnh báo:</strong> <em>bài này không có nhiều toán.</em></p>
+
+<p><strong>Trong trang này:</strong>
+<!-- MarkdownTOC --></p>
+
+<ul>
+  <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#1-phan-nhom-ch-s-vit-tay">1. Phân nhóm chữ số viết tay</a>
+    <ul>
+      <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#b-c-s-d-liu-mnist">Bộ cơ sở dữ liệu MNIST</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#bai-toan-phan-nhom-gi-nh">Bài toán phân nhóm giả định</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#lam-vic-tren-python">Làm việc trên Python</a></li>
+    </ul>
+  </li>
+  <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#2-object-segmentation-tach-vt-th-trong-nh">2. Object Segmentation (tách vật thể trong ảnh)</a>
+    <ul>
+      <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#t-vn">Đặt vấn đề</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#len--tng">Lên ý tưởng</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#lam-vic-tren-python">Làm việc trên Python</a></li>
+    </ul>
+  </li>
+  <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#3-image-compression-nen-nh-va-nen-d-liu-noi-chung">3. Image Compression (nén ảnh và nén dữ liệu nói chung)</a></li>
+  <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#4-tho-lun">4. Thảo luận</a></li>
+  <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#5-souce-code">5. Souce code</a></li>
+  <li><a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#6-tai-liu-tham-kho">6. Tài liệu tham khảo</a></li>
+</ul>
+
+<!-- /MarkdownTOC -->
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="-phan-nhom-chu-so-viet-tay"></a></p>
+
+<h2 id="1-phân-nhóm-chữ-số-viết-tay">1. Phân nhóm chữ số viết tay</h2>
+<!-- ========================== New Heading ==================== -->
+<p><a name="bo-co-so-du-lieu-mnist"></a></p>
+
+<h3 id="bộ-cơ-sở-dữ-liệu-mnist">Bộ cơ sở dữ liệu MNIST</h3>
+<p><a href="http://yann.lecun.com/exdb/mnist/">Bộ cơ sở dữ liệu MNIST</a> là bộ cơ sở dữ liệu lớn nhất về chữ số viết tay và được sử dụng trong hầu hết các thuật toán nhận dạng hình ảnh (Image Classification).</p>
+
+<p>MNIST bao gồm hai tập con: tập dữ liệu huấn luyện (training set) có tổng cộng 60k ví dụ khác nhau về chữ số viết tay từ 0 đên 9, tập dữ liệu kiểm tra (test set) có 10k ví dụ khác nhau. Tất cả đều đã được gán nhãn. Hình dưới đây là ví dụ về một số hình ảnh được trích ra từ MNIST.</p>
+
+<div class="imgcap">
+<!-- <a href = "http://www.rubylab.io/img/mnist.png"> -->
+    <img src="./Machine Learning cơ bản 5_files/mnist.png" width="800">
+    <!-- <img src="/assets/rl/mdp.png" height="206"> -->
+<!-- </div> -->
+<div class="thecap"><a href="http://yann.lecun.com/exdb/mnist/">MNIST</a>: bộ cơ sở dữ liệu của chữ số viết tay. <br> (Nguồn: <a href="http://www.rubylab.io/2015/03/18/simple-neural-network-implenentation-in-ruby/">Simple Neural Network implementation in Ruby)</a></div>
+</div>
+
+<p>Mỗi bức ảnh là một ảnh đen trắng (có 1 channel), có kích thước 28x28 pixel (tổng cộng 784 pixels). Mỗi pixel mang một giá trị là một số tự nhiên từ 0 đến 255. Các pixel màu đen có giá trị bằng 0, các pixel càng trắng thì có giá trị càng cao (nhưng không quá 255). Dưới đây là một ví dụ về chữ số 7 và giá trị các pixel của nó. (<em>Vì mục đích hiển thị ma trận pixel ở bên phải, tôi đã resize bức ảnh về 14x14</em>)</p>
+
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 5_files/digit_7.png" align="center">
+</div>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="bai-toan-phan-nhom-gia-dinh"></a></p>
+
+<h3 id="bài-toán-phân-nhóm-giả-định">Bài toán phân nhóm giả định</h3>
+<p><strong>Bài toán: Giả sử rằng chúng ta không biết nhãn của các chữ số này, chúng ta muốn phân nhóm các bức ảnh gần giống nhau về một nhóm.</strong></p>
+
+<p>Lại thêm một giả sử nữa là chúng ta mới chỉ biết tới thuật toán phân nhóm <a href="https://machinelearningcoban.com/2017/01/01/kmeans/">K-means clustering</a> gần đây từ blog <a href="https://tiepvupsu.github.io/">Machine Learning cơ bản</a> (<em>xin lỗi độc giả vì để các bài học có ý nghĩa hơn, chúng ta đôi khi cần những giả định không được thực tế cho lắm</em>), chúng ta sẽ giải quyết bài toán này thế nào?</p>
+
+<p>Trước khi áp dụng thuật toán <a href="https://machinelearningcoban.com/2017/01/01/kmeans/">K-means clustering</a>, chúng ta cần coi mỗi bức ảnh là một điểm dữ liệu. Và vì mỗi điểm dữ liệu là 1 vector (hàng hoặc cột) chứ không phải ma trận như số 7 ở trên, chúng ta phải làm thêm một bước đơn giản trung gian gọi là <em>vectorization</em> (vector hóa). Nghĩa là, để có được 1 vector, ta có thể tách các hàng của ma trận pixel ra, sau đó đặt chúng cạnh nhau, và chúng ta được một vector hàng rất dài biểu diễn 1 bức ảnh chữ số.</p>
+
+<p><strong>Chú ý</strong>: <em>Cách làm này chỉ là cách đơn giản nhất để mô tả dữ liệu ảnh bằng 1 vector. Trên thực tế, người ta áp dụng rất nhiều kỹ thuật khác nhau để có thể tạo ra các vector đặc trưng (feature vector) giúp các thuật toán có được kết quả tốt hơn.</em></p>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="lam-viec-tren-python"></a></p>
+
+<h3 id="làm-việc-trên-python">Làm việc trên Python</h3>
+<p>Trước tiên các bạn vào trang chủ của MNIST để <a href="http://yann.lecun.com/exdb/mnist/">download</a> bộ cơ sở dữ liệu này. Mặc dù trong bài này chúng ta chỉ dùng bộ dữ liệu test với 10k ảnh và không cần label, các bạn vẫn cần download cả hai file <code class="highlighter-rouge">t10k-images-idx3-ubyte.gz</code> và <code class="highlighter-rouge">t10k-labels-idx1-ubyte.gz</code> vì thư viện <code class="highlighter-rouge">python-mnist</code> cần cả hai file này để load dữ liệu từ tập test.</p>
+
+<p><strong>Trước tiên chúng ta cần khai báo một số thư viện:</strong></p>
+
+<p><code class="highlighter-rouge">numpy</code> cho các phép toán liên quan đến ma trận. <a href="https://pypi.python.org/pypi/python-mnist/"><code class="highlighter-rouge">mnist</code></a> để đọc dữ liệu từ MNIST. <code class="highlighter-rouge">matplotlib</code> để hiển thị hình vẽ. <code class="highlighter-rouge">sklearn</code> chính là <code class="highlighter-rouge">scikit-learn</code> mà chúng ta đã làm quen trong các bài trước. (<em>Về việc cài đặt các thư viện này, tôi hy vọng bạn đọc có thể Google thêm đôi chút. Nếu có khó khăn trong việc cài đặt, hãy để lại comment ở dưới bài. Lưu ý, làm việc trên Windows sẽ khó khăn hơn một chút so với Linux</em>)</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># %reset</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span> 
+<span class="kn">from</span> <span class="nn">mnist</span> <span class="kn">import</span> <span class="n">MNIST</span> <span class="c"># require `pip install python-mnist`</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+</code></pre></div></div>
+
+<p><strong>Để hiện thị nhiều bức ảnh các chữ số cùng một lúc, tôi có dùng thêm hàm số <a href="https://github.com/tiepvupsu/tiepvupsu.github.io/blob/master/assets/kmeans/display_network.py"><code class="highlighter-rouge">display_network.py</code></a></strong>.</p>
+
+<p><strong>Thực hiện thuật toán K-means clustering trên toàn bộ 10k chữ số.</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">display_network</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">mndata</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="s">'../MNIST/'</span><span class="p">)</span> <span class="c"># path to your MNIST folder </span>
+<span class="n">mndata</span><span class="o">.</span><span class="n">load_testing</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">mndata</span><span class="o">.</span><span class="n">test_images</span>
+
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">K</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">pred_label</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>(<em>Phần còn lại của source code có thể được tìm thấy <a href="https://github.com/tiepvupsu/tiepvupsu.github.io/blob/master/assets/kmeans/Kmeans2.ipynb">tại đây</a></em>)</p>
+
+<p>Đến đây, sau khi đã tìm được các center và phân nhóm dữ liệu vào từng cluster, tôi muốn hiển thị xem center trông như thế nào và các bức ảnh được phân vào mỗi cluster có giống nhau hay không. Dưới đây là kết quả khi tôi chọn ngẫu nhiên 20 bức ảnh từ mỗi cluster.</p>
+
+<!-- ![png](output_7_0.png) -->
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 5_files/kmeans_random.png" align="center">
+<div class="thecap">Áp dụng K-means clustering vào tập test set của bộ cơ sở dữ liệu MNIST với K = 10 cluster. Cột 1: centers của các cluster. Các cột còn lại: Mỗi hàng là 20 điểm dữ liệu ngẫu nhiên được chọn ra từ mỗi cluster.
+</div>
+</div>
+<p>Mỗi hàng tương ứng với một cluster, cột đầu tiên có nền xanh bên trái là centers tìm được của các clusters (màu đỏ hơn là các pixel có giá trị cao hơn). Chúng ta thấy rằng các center đều hoặc là giống với một chữ số nào đó, hoặc là kết hợp của hai/ba chữ số nào đó. Ví dụ: center của nhóm thứ 4 là sự kết hợp của các số 4, 7, 9; của hàng thứ 7 là kết hợp của chữ số 7, 8 và 9.</p>
+
+<p>Tuy nhiên, các bức ảnh lấy ra ngẫu nhiên từ mỗi nhóm trông không thực sự giống nhau. Lý do có thể là những bức ảnh này ở xa các center của mỗi nhóm (mặc dù center đó đã là gần nhất). Như vậy thuật toán K-means clustering làm việc không thực sự tốt trong trường hợp này. (<em>Thật may là vì thế nên chúng ta vẫn còn nhiều thứ để học nữa</em>).</p>
+
+<p>Chúng ta vẫn có thể khai thác một số thông tin hữu ích sau khi thực hiện thuật toán này. Bây giờ, thay vì chọn ngẫu nhiên các bức ảnh trong mỗi cluster, tôi chọn 20 bức ảnh gần center của mỗi cluster nhất, vì càng gần center thì độ tin cậy càng cao. Hãy xem hình dưới đây:</p>
+
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 5_files/kmeans_knn.png" align="center">
+<div class="thecap">Áp dụng K-means clustering vào tập test set của bộ cơ sở dữ liệu MNIST với K = 10 cluster. Cột 1: centers của các cluster. Các cột còn lại: Mỗi hàng là 20 điểm dữ liệu gần center nhất của mỗi cluster.
+</div>
+</div>
+
+<p>Bạn đọc có thể thấy dữ liệu trong mỗi hàng khá giống nhau và giống với center ở cột đầu tiên bên trái. Có một vài quan sát thú vị có thể rút ra từ đây:</p>
+
+<ol>
+  <li>
+    <p>Có hai kiểu viết chữ số 1, một thẳng, một chéo. Và K-means clustering nghĩ rằng đó là hai chữ số khác nhau. Điều này là dễ hiểu vì K-means clustering là thuật toán <a href="https://machinelearningcoban.com/2016/12/27/categories/#unsupervised-learning-hoc-khong-giam-sat">Unsupervised learning</a>. Nếu có sự can thiệp của con người, chúng ta có thể nhóm hai clusters này vào làm một.</p>
+  </li>
+  <li>
+    <p>Hàng số 9, chữ số 4 và 9 được phân vào cùng 1 cluster. Sự thật là hai chữ số này cũng khá giống nhau. Điều tương tự xảy ra đối với hàng số 7 với các chữ số 7, 8, 9 được xếp vào 1 cluster. Với các cluster này, chúng ta có thể tiếp tục áp dụng K-means clustering để phân nhỏ cluster đó ra.</p>
+  </li>
+  <li>
+    <p>Trong clustering có một kỹ thuật thường được sử dụng là <a href="https://en.wikipedia.org/wiki/Hierarchical_clustering">Hierarchical clustering (clustering phân tầng )</a>. Có hai loại Hierachical clustering:</p>
+
+    <ul>
+      <li>
+        <p><strong>Agglomerative</strong> tức “đi từ dưới lên”. Ban đầu coi mỗi điểm dữ liệu thuộc 1 cluster khác nhau, sau đó các cặp cluster gần giống nhau được gộp lại làm một cluster lớn hơn. Lặp lại quá trình này đến khi nhận được kết quả chấp nhận được.</p>
+      </li>
+      <li>
+        <p><strong>Divisive</strong> tức “đi từ trên xuống”. Ban đầu coi tất cả các điểm dữ liệu thuộc cùng một cluster, sau đó chia nhỏ mỗi cluster bằng một thuật toán clustering nào đó.</p>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="-object-segmentation-tach-vat-the-trong-anh"></a></p>
+
+<h2 id="2-object-segmentation-tách-vật-thể-trong-ảnh">2. Object Segmentation (tách vật thể trong ảnh)</h2>
+<!-- ========================== New Heading ==================== -->
+<p><a name="dat-van-de"></a></p>
+
+<h3 id="đặt-vấn-đề">Đặt vấn đề</h3>
+<p>Chúng ta cùng thử áp dụng thuật toán K-means clustering vào một bài toán xử lý ảnh khác: tách vật thể.</p>
+
+<p>Giả sử chúng ta có bức ảnh dưới đây và muốn một thuật toán tự động nhận ra vùng khuôn mặt và tách nó ra.</p>
+
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 5_files/girl3.jpg" align="center">
+<div class="thecap">Credit ảnh: <a href="https://www.facebook.com/photo.php?fbid=1219980151402370&amp;set=a.113129725420757.13101.100001711890571&amp;type=3&amp;theater"> Trọng Vũ</a>
+</div>
+</div>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="len-y-tuong"></a></p>
+
+<h3 id="lên-ý-tưởng">Lên ý tưởng</h3>
+<p>(<em>Lại giả sử rằng chúng ta chưa biết gì khác ngoài K-means clustering, các bạn hãy dừng vài giây để nghĩ xem chúng ta có thể xử lý thế nào. Gợi ý: Có ba màu chủ đạo trong bức ảnh.</em>)</p>
+
+<p>Ok, có ba màu, ba clusters!</p>
+
+<p>Bức ảnh có ba màu chủ đạo: hồng ở khăn và môi; đen ở mắt, tóc, và hậu cảnh; màu da ở vùng còn lại của khuôn mặt. Vậy chúng ta có thể áp dụng thuật toán K-means clustering để phân các pixel ảnh thành 3 clusters, sau đó chọn cluster chứa phần khuôn mặt (phần này do con người làm).</p>
+
+<p>Đây là một bức ảnh màu, mỗi điểm ảnh sẽ được biểu diễn bới 3 giá trị tương ứng với màu Red, Green, và Blue (mỗi giá trị này cũng là một số tự nhiên không vượt quá 255). Nếu ta coi mỗi điểm dữ liệu là một vector 3 chiều chứa các giá trị này, sau đó áp dụng thuật toán K-means clustering, chúng ta có thể có kết quả mong muốn. Hãy thử xem</p>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="lam-viec-tren-python-1"></a></p>
+
+<h3 id="làm-việc-trên-python-1">Làm việc trên Python</h3>
+
+<p><strong>Khai báo thư viện và load bức ảnh:</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="n">mpimg</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s">'girl3.jpg'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">imgplot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">'off'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</code></pre></div></div>
+
+<p><strong>Biến đổi bức ảnh thành 1 ma trận mà mỗi hàng là 1 pixel với 3 giá trị màu</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">X</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<p>(<em>Phần còn lại của source code có thể xem <a href="https://github.com/tiepvupsu/tiepvupsu.github.io/blob/master/assets/kmeans/Kmeans2.ipynb">tại đây</a></em>).</p>
+
+<p>Sau khi tìm được các cluster, tôi thay giá trị của mỗi pixel bằng center của cluster chứa nó, và được kết quả như sau:</p>
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 5_files/girl_seg.png" align="center">
+</div>
+
+<p>Ba màu: Hồng, đen, và màu da đã được phân nhóm. Và khuôn mặt có thể được tách ra từ phần có màu da (và vùng bên trong nó). Vậy là K-means clustering tạo ra một kết quả chấp nhận được.</p>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="-image-compression-nen-anh-va-nen-du-lieu-noi-chung"></a></p>
+
+<h2 id="3-image-compression-nén-ảnh-và-nén-dữ-liệu-nói-chung">3. Image Compression (nén ảnh và nén dữ liệu nói chung)</h2>
+
+<p>Để ý thấy rằng mỗi một pixel có thể nhận một trong số <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-1-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msup&gt;&lt;mn&gt;256&lt;/mn&gt;&lt;mn&gt;3&lt;/mn&gt;&lt;/msup&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;16&lt;/mn&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mn&gt;777&lt;/mn&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mn&gt;216&lt;/mn&gt;&lt;/math&gt;" role="presentation" style="font-size: 117%; position: relative;"><span id="MJXc-Node-1" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-2" class="mjx-mrow"><span id="MJXc-Node-3" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-4" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.377em;">256</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-5" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.377em;">3</span></span></span></span><span id="MJXc-Node-6" class="mjx-mo MJXc-space3"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.056em; padding-bottom: 0.323em;">=</span></span><span id="MJXc-Node-7" class="mjx-mn MJXc-space3"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.377em;">16</span></span><span id="MJXc-Node-8" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="margin-top: -0.158em; padding-bottom: 0.537em;">,</span></span><span id="MJXc-Node-9" class="mjx-mn MJXc-space1"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.377em;">777</span></span><span id="MJXc-Node-10" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="margin-top: -0.158em; padding-bottom: 0.537em;">,</span></span><span id="MJXc-Node-11" class="mjx-mn MJXc-space1"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.377em; padding-bottom: 0.377em;">216</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>256</mn><mn>3</mn></msup><mo>=</mo><mn>16</mn><mo>,</mo><mn>777</mn><mo>,</mo><mn>216</mn></math></span></span><script type="math/tex" id="MathJax-Element-1">256^3 = 16,777,216</script> (16 triệu màu mà chúng ta vẫn nghe khi quảng cáo màn hình). Đây là một số rất lớn (tương đương với 24 bit cho một điểm ảnh). Nếu ta muốn lưu mỗi điểm ảnh với một số bit nhỏ hơn và chấp nhận mất dữ liệu ở một mức nào đó, có cách nào không nếu ta chỉ biết K-means clustering?</p>
+
+<p>Câu trả lời là có. Trong bài toán Segmentation phía trên, chúng ta có 3 clusters, và mỗi một điểm ảnh sau khi xử lý sẽ được biểu diễn bởi 1 số tương ứng với 1 cluster. Tuy nhiên, chất lượng bức ảnh rõ ràng đã giảm đi nhiều. Tôi làm một thí nghiệm nhỏ với số lượng clusters được tăng lên là 5, 10, 15, 20. Sau khi tìm được centers cho mỗi cluster, tôi thay giá trị của một điểm ảnh bằng giá trị của center tương ứng:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">]:</span>
+    <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">K</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="n">img4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="c"># replace each pixel by its center</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+        <span class="n">img4</span><span class="p">[</span><span class="n">label</span> <span class="o">==</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="c"># reshape and display output image</span>
+    <span class="n">img5</span> <span class="o">=</span> <span class="n">img4</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img5</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">'nearest'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">'off'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Kết quả:</p>
+
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 5_files/girl_all.png" align="center">
+</div>
+
+<p>Bạn đọc có thể quan sát là khi số lượng clusters tăng lên, chất lượng bức ảnh đã được cải thiện. Đồng thời, chúng ta chỉ cần lưu các centers và label của mỗi điểm ảnh là đã có được một bức ảnh nén (có mất dữ liệu).</p>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="-thao-luan"></a></p>
+
+<h2 id="4-thảo-luận">4. Thảo luận</h2>
+<ol>
+  <li>
+    <p>Với một thuật toán K-means clustering đơn giản, chúng ta đã có thể áp dụng nó vào các bài toán thực tế. Mặc dù kết quả chưa thực sự như ý, chúng ta vẫn thấy được tiềm năng của thuật toán đơn giản này.</p>
+  </li>
+  <li>
+    <p>Cách thay một điểm dữ liệu bằng center tương ứng là một trong số các kỹ thuật có tên chung là <a href="https://en.wikipedia.org/wiki/Vector_quantization">Vector Quantization (VQ)</a>. Không chỉ trong nén dữ liệu, VQ còn được áp dụng rộng rãi trong các thuật toán tạo Feature Vector cho các bài toán Phân loại (classification).</p>
+  </li>
+  <li>
+    <p>Các thuật toán trong bài toán này được áp dụng cho xử lý ảnh vì việc này giúp tôi dễ dàng minh họa kết quả hơn. Các kỹ thuật này hoàn toàn có thể áp dụng cho các loại cơ sở dữ liệu khác.</p>
+  </li>
+</ol>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="-souce-code"></a></p>
+
+<h2 id="5-souce-code">5. Souce code</h2>
+<p>Các bạn có thể <a href="https://github.com/tiepvupsu/tiepvupsu.github.io/blob/master/assets/kmeans/Kmeans2.ipynb">download source code ở đây</a>.</p>
+
+<!-- ========================== New Heading ==================== -->
+<p><a name="-tai-lieu-tham-khao"></a></p>
+
+<h2 id="6-tài-liệu-tham-khảo">6. Tài liệu tham khảo</h2>
+
+<p><a href="http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognition%20And%20Machine%20Learning%20-%20Springer%20%202006.pdf">Pattern Recognition and Machine Learning - Christopher Bishop</a></p>
+
+</div>
+
+<hr> 
+<em>Nếu có câu hỏi, Bạn có thể để lại comment bên dưới hoặc trên <a href="https://www.facebook.com/groups/257768141347267/">Forum</a> để nhận được câu trả lời sớm hơn.</em>
+<br>
+<em>Bạn đọc có thể ủng hộ blog qua <a href="https://machinelearningcoban.com/buymeacoffee/">'Buy me a cofee'</a> ở góc trên bên trái của blog.
+</em>
+
+<br>
+<em>Tôi vừa hoàn thành cuốn ebook 'Machine Learning cơ bản', bạn có thể đặt sách <a href="https://machinelearningcoban.com/ebook/">tại đây</a>.
+
+Cảm ơn bạn.</em>
+
+<hr>
+
+<!-- previous and next posts -->
+<div class="PageNavigation">
+   
+      <a class="prev" style="color: #204081;" href="https://machinelearningcoban.com/2017/01/01/kmeans/">« Bài 4: K-means Clustering</a>
+   
+   
+      <a class="next" style="float: right; color: #204081;" href="https://machinelearningcoban.com/2017/01/08/knn/">Bài 6: K-nearest neighbors »</a>
+   
+</div>
+
+
+<!-- disqus comments -->
+
+      <hr>
+   
+<div id="disqus_thread"><iframe id="dsq-app5912" name="dsq-app5912" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" sandbox="allow-forms allow-popups allow-same-origin allow-scripts" width="100%" src="./Machine Learning cơ bản 5_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 576px !important;"></iframe><iframe id="dsq-app5909" name="dsq-app5909" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Machine Learning cơ bản 5_files/saved_resource(1).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 9150px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="dsq-app5914" name="dsq-app5914" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" sandbox="allow-forms allow-popups allow-same-origin allow-scripts" width="100%" src="./Machine Learning cơ bản 5_files/saved_resource(2).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 0px !important;"></iframe></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'tiepvu';
+  var disqus_identifier = 'tiepvupsu.github.io' + '/2017/01/04/kmeans2/';
+
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="<a class="vglnk" href="http://disqus.com/?ref_noscript" rel="nofollow"><span>http</span><span>://</span><span>disqus</span><span>.</span><span>com</span><span>/?</span><span>ref</span><span>_</span><span>noscript</span></a>">comments powered by Disqus.</a></noscript>
+
+
+    <script id="dsq-count-scr" src="./Machine Learning cơ bản 5_files/count.js.download" async=""></script>
+
+
+
+
+
+   <!-- Start of StatCounter Code for Default Guide -->
+<script type="text/javascript">
+var sc_project=11213320; 
+var sc_invisible=0; 
+var sc_security="cfec1432"; 
+var sc_text=2; 
+var scJsHost = (("https:" == document.location.protocol) ?
+"https://secure." : "http://www.");
+document.write("Total visits: <sc"+"ript type='text/javascript' src='" +
+scJsHost+
+"statcounter.com/counter/counter.js'> </"+"script>");
+</script>Total visits: <script type="text/javascript" src="./Machine Learning cơ bản 5_files/counter.js.download"> </script><script src="./Machine Learning cơ bản 5_files/text.php"></script>26,052
+
+<noscript><div class="statcounter"><a title="web analytics"
+href="<a class="vglnk" href="http://statcounter.com/" rel="nofollow"><span>http</span><span>://</span><span>statcounter</span><span>.</span><span>com</span><span>/</span></a>" target="_blank"><img
+class="statcounter"
+src="//c.statcounter.com/11213320/0/cfec1432/0/" alt="web
+analytics"></a> </div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+
+<!-- <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+
+<script type="text/javascript" async="" src="./Machine Learning cơ bản 5_files/MathJax.js.download">
+</script>
+<!-- 
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?...">
+</script> -->
+	        </div>
+	        <div class="col-md-2 hidden-xs hidden-sm">
+	        	
+          <!-- Google search -->
+<!--           <table border="0">
+          <div id = "top-widget" style="width: 252px; margin-left: -13.5px; margin-top: -10px; margin-bottom: -15px;">
+         <script>
+           (function() {
+             var cx = '012053542614118746585:ktgei4l2oek';
+             var gcse = document.createElement('script');
+             gcse.type = 'text/javascript';
+             gcse.async = true;
+             gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+             var s = document.getElementsByTagName('script')[0];
+             s.parentNode.insertBefore(gcse, s);
+           })();
+         </script>
+         <gcse:search></gcse:search>
+          </div>
+          </table> -->
+
+          
+
+         <!--  
+          <nav>
+          
+            <div class="header">Latest by category</div>
+            <ul>
+              
+                
+              
+                
+              
+                
+                  
+                    <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif; color: #204081;" href="/2017/01/04/kmeans2/">Bài 5: K-means Clustering: Simple Applications</a></li>
+                  
+                    <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif; color: #204081;" href="/2017/01/01/kmeans/">Bài 4: K-means Clustering</a></li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+          </nav>
+          
+
+
+
+          <nav>
+            <div class="header">Latest</div>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/09/11/forum/">Giới thiệu Diễn đàn Machine Learning cơ bản</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/07/06/deeplearning/">Bài 36. Giới thiệu về Keras</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/06/22/deeplearning/">Bài 35: Lược sử Deep Learning</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/03/22/phuonghoagiang/">Bạn đọc viết: Con đường học Khoa học dữ liệu của một sinh viên Kinh tế</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/03/09/book/">Sách Machine Learning cơ bản</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/01/14/id3/">Bài 34: Decision Trees (1): Iterative Dichotomiser 3</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/08/31/evaluation/">Bài 33: Các phương pháp đánh giá một hệ thống phân lớp</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/10/20/fundaml_vectors/">FundaML 3: Làm việc với các mảng ngẫu nhiên</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/10/20/fundaml_matrices/">FundaML 2: Làm việc với ma trận</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/10/12/fundaml_vectors/">FundaML 1: Làm việc với mảng một chiều</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/09/24/fundaml/">Giới thiệu trang web FundaML.com</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/08/08/nbc/">Bài 32: Naive Bayes Classifier</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/08/05/phdlife/">PhD life 1: Quá trình viết và nhận xét các bài báo khoa học</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/07/17/mlemap/">Bài 31: Maximum Likelihood và Maximum A Posteriori estimation</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/lifesofar/">Con đường học Toán của tôi</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/07/09/prob/">Bài 30: Ôn tập Xác Suất cho Machine Learning</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/07/02/tl/">Quick Note 2: Transfer Learning cho bài toán phân loại ảnh</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/06/30/lda/">Bài 29: Linear Discriminant Analysis</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/06/22/qns1/">Quick Notes 1</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/06/21/pca2/">Bài 28: Principal Component Analysis (phần 2/2)</a></li>
+              
+            </ul>
+          </nav> -->
+
+          <aside class="social">
+          <div class="header">Share</div>
+          <div class="share-page">
+    <!-- <b>Share this on:</b>  <br> -->
+
+    <!-- Facebook -->
+    <!-- <a href="https://facebook.com/sharer/sharer.php?u=https://machinelearningcoban.com/2017/01/04/kmeans2/" rel="nofollow" target="_blank" title="Share on Facebook"><img src = "/assets/images/facebook.png" width="25"></a> -->
+
+    <div class="fb-share-button fb_iframe_widget" data-href="https://machinelearningcoban.com/2017/01/04/kmeans2/" data-layout="button_count" data-size="small" data-mobile-iframe="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=&amp;container_width=132&amp;href=https%3A%2F%2Fmachinelearningcoban.com%2F2017%2F01%2F04%2Fkmeans2%2F&amp;layout=button_count&amp;locale=en_US&amp;mobile_iframe=true&amp;sdk=joey&amp;size=small"><span style="vertical-align: bottom; width: 75px; height: 20px;"><iframe name="f228f68c3d5fb1c" width="1000px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" title="fb:share_button Facebook Social Plugin" src="./Machine Learning cơ bản 5_files/share_button.html" style="border: none; visibility: visible; width: 75px; height: 20px;" class=""></iframe></span></div>
+
+
+    <!-- Twitter -->
+    <!-- <a href="https://twitter.com/intent/tweet?text=Bài 5: K-means Clustering: Simple Applications&url=https://machinelearningcoban.com/2017/01/04/kmeans2/&via=&related=" rel="nofollow" target="_blank" title="Share on Twitter" width="25" ><img src = "/assets/images/twitter.png" width="25"></a> -->
+
+    <!-- Google -->
+    <!-- <a href="https://plus.google.com/share?url=https://machinelearningcoban.com/2017/01/04/kmeans2/" rel="nofollow" target="_blank" title="Share on Google+"><img src = "/assets/images/google.png" width="25"></a> -->
+
+    
+    <!-- LinkedIn -->
+    <!-- <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https://machinelearningcoban.com/2017/01/04/kmeans2/" target="_blank"> <img src="/assets/images/linkedin.png" alt="LinkedIn" width="25"/> -->
+    <!-- </a> -->
+
+    <!-- Email -->
+    <a href="mailto:?Subject=Simple%20Share%20Buttons&amp;Body=I%20saw%20this%20and%20thought%20of%20you!%20%20https://machinelearningcoban.com/2017/01/04/kmeans2/">
+        <img src="./Machine Learning cơ bản 5_files/email.png" alt="Email" width="25">
+    </a>
+    <!-- Print -->
+    <a href="javascript:;" onclick="window.print()">
+        <img src="./Machine Learning cơ bản 5_files/print.png" alt="Print" width="25">
+    </a>
+   </div>
+          </aside>
+          
+           <nav>
+            <div class="header">Diễn đàn</div>
+            <a href="https://forum.machinelearningcoban.com/">
+            <img width="100%" src="./Machine Learning cơ bản 5_files/new_logo9-2.png">  </a>
+          </nav>
+          
+          <nav>
+            <div class="header">Interactive Learning</div>
+            <a href="https://fundaml.com/">
+            <img width="100%" src="./Machine Learning cơ bản 5_files/fundaml_web.png">  </a>
+          </nav>
+
+          <nav>
+          <div class="header" with="100%">Facebook page</div>
+          <!-- <a href = "https://www.facebook.com/machinelearningbasicvn/" target="_blank" title="Follow us"><img src = "/assets/images/facebook.png" width="30"></a> -->
+          <!-- facebook page -->
+
+         <div class="fb-page fb_iframe_widget" data-href="https://www.facebook.com/machinelearningbasicvn/" data-width="250" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false" fb-xfbml-state="rendered" fb-iframe-plugin-query="adapt_container_width=true&amp;app_id=&amp;container_width=132&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2Fmachinelearningbasicvn%2F&amp;locale=en_US&amp;sdk=joey&amp;show_facepile=false&amp;small_header=false&amp;width=250"><span style="vertical-align: bottom; width: 180px; height: 130px;"><iframe name="f1ee53138badffc" width="250px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" title="fb:page Facebook Social Plugin" src="./Machine Learning cơ bản 5_files/page.html" style="border: none; visibility: visible; width: 180px; height: 130px;" class=""></iframe></span></div>
+          <!--end facebook page -->
+
+          </nav>
+          <nav>
+            <div class="header">Facebook group</div>
+            <a href="https://www.facebook.com/groups/257768141347267/">
+            <img width="100%" src="./Machine Learning cơ bản 5_files/multi_layers.png">  </a>
+          </nav>
+          
+
+
+          <nav>
+
+          <div class="header">Recommended books</div>
+            <ul>
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=1&amp;cad=rja&amp;uact=8&amp;ved=0ahUKEwjd7Y_Q-tzTAhVISyYKHUXyCekQFggvMAA&amp;url=http%3A%2F%2Fusers.isr.ist.utl.pt%2F~wurmd%2FLivros%2Fschool%2FBishop%2520-%2520Pattern%2520Recognition%2520And%2520Machine%2520Learning%2520-%2520Springer%2520%25202006.pdf&amp;usg=AFQjCNEVQzQ_dEpxG4P7NamTWUXnVXzCng&amp;sig2=H1WVtom4rq3uh8UfbGX4oA">"Pattern recognition and Machine Learning.", C. Bishop </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://github.com/tpn/pdfs/blob/master/The%20Elements%20of%20Statistical%20Learning%20-%20Data%20Mining%2C%20Inference%20and%20Prediction%20-%202nd%20Edition%20(ESLII_print4).pdf">"The Elements of Statistical Learning", T. Hastie et al.  </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://www.computervisionmodels.com/">"Computer Vision:  Models, Learning, and Inference", Simon J.D. Prince </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://stanford.edu/~boyd/cvxbook/">"Convex Optimization", Boyd and Vandenberghe</a></li>
+
+            </ul>
+          </nav>
+
+          <nav>
+          <div class="header">Recommended courses</div>
+
+          <ul>
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.coursera.org/learn/machine-learning?utm_source=gg&amp;utm_medium=sem&amp;campaignid=693373197&amp;adgroupid=36745103515&amp;device=c&amp;keyword=machine%20learning%20andrew%20ng&amp;matchtype=e&amp;network=g&amp;devicemodel=&amp;adpostion=1t1&amp;creativeid=156061453588&amp;hide_mobile_promo&amp;gclid=Cj0KEQjwt6fHBRDtm9O8xPPHq4gBEiQAdxotvNEC6uHwKB5Ik_W87b9mo-zTkmj9ietB4sI8-WWmc5UaAi6a8P8HAQ">"Machine Learning", Andrew Ng </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://web.stanford.edu/class/cs224n/">CS224n: Natural Language Processing with Deep Learning</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://cs231n.stanford.edu/">CS231n: Convolutional Neural Networks for Visual Recognition</a></li>           
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://web.stanford.edu/class/cs246/">CS246: Mining Massive Data Sets</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://web.stanford.edu/class/cs20si/syllabus.html">CS20SI: Tensorflow for Deep Learning Research </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.edx.org/course/introduction-computer-science-mitx-6-00-1x-10">Introduction to Computer Science and Programming Using Python</a></li>           
+
+            </ul>
+          </nav>
+
+          <nav>
+          <div class="header">Others</div>
+          <ul>
+              <li> <a style="text-align: left; color: #074B80;" href="https://github.com/ZuzooVn/machine-learning-for-software-engineers">Top-down learning path: Machine Learning for Software Engineers</a></li>
+              
+              <li> <a style="text-align: left; color: #074B80;" href="https://machinelearningcoban.com/2017/02/02/howdoIcreatethisblog/">Blog này được tạo như thế nào?</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://thepresentwriter.com/chung-toi-da-apply-va-hoc-tien-si-nhu-the-nao-phan-1/">Chúng tôi đã apply và học tiến sỹ như thế nào? (1/2)</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://thepresentwriter.com/chung-toi-da-apply-va-hoc-tien-si-nhu-the-nao-phan-2/">Chúng tôi đã apply và học tiến sỹ như thế nào? (2/2)</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://machinelearningmastery.com/inspirational-applications-deep-learning/">8 Inspirational Applications of Deep Learning</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://ccrma.stanford.edu/~dattorro/matrixcalc.pdf">Matrix calculus</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://github.com/aymericdamien/TensorFlow-Examples">TensorFlow-Examples</a></li>
+              
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.forbes.com/sites/quora/2017/04/05/eight-easy-steps-to-get-started-learning-artificial-intelligence/#53c29fa5b117">Eight Easy Steps To Get Started Learning Artificial Intelligence</a></li>
+              <li> <a style="text-align: left; color: #074B80;" href="https://adeshpande3.github.io/adeshpande3.github.io/The-9-Deep-Learning-Papers-You-Need-To-Know-About.html">The 9 Deep Learning Papers You Need To Know About</a></li>
+
+                     
+
+            </ul>
+          </nav>
+          <!-- <img style = "transform: scaleX(1); width:100%; margin-left:00px;position: absolute;" src = "/images/mai.jpg"> -->
+         
+         <!--   
+            <nav>
+              <div class="header">Previous by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #074B80;" href="/2017/01/01/kmeans/">Bài 4: K-means Clustering</a></li>
+              </ul>
+            </nav>
+           
+           
+            <nav>
+              <div class="header">Next by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #204081;" href="/2017/01/08/knn/">Bài 6: K-nearest neighbors</a></li>
+              </ul>
+            </nav>
+            -->
+	        <!-- <img style = "transform: scaleX(1); width:250%; margin-left:-100px;" src = "/images/dao.jpg"> -->
+	        <!-- <a href ="https://www.facebook.com/masspvn/?fref=nf&pnref=story">MaSSP</a> -->
+	        </div>
+      	</div>
+    </div><iframe style="display: none;" src="./Machine Learning cơ bản 5_files/saved_resource(3).html"></iframe>
+
+
+
+</body></html>

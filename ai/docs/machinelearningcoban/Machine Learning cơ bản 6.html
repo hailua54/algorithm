@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)https://machinelearningcoban.com/2017/01/08/knn/ -->
+<html><head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Machine Learning cơ bản</title>
+  <link rel="stylesheet" href="./Machine Learning cơ bản 6_files/bootstrap.min.css">
+  <script type="text/javascript" async="" src="./Machine Learning cơ bản 6_files/analytics.js.download"></script><script id="facebook-jssdk" src="./Machine Learning cơ bản 6_files/sdk.js(1).download"></script><script async="" src="./Machine Learning cơ bản 6_files/gtm.js.download"></script><script async="" src="./Machine Learning cơ bản 6_files/analytics.js.download"></script><script src="./Machine Learning cơ bản 6_files/jquery.min.js.download"></script>
+  <script src="./Machine Learning cơ bản 6_files/bootstrap.min.js.download"></script>
+  <link href="./Machine Learning cơ bản 6_files/css" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> -->
+  <link href="./Machine Learning cơ bản 6_files/css(1)" rel="stylesheet">
+  <link href="./Machine Learning cơ bản 6_files/css(2)" rel="stylesheet">
+  <link href="./Machine Learning cơ bản 6_files/css(3)" rel="stylesheet">
+
+<!-- Include CSS SCSS -->
+
+   <link rel="stylesheet" type="text/css" href="./Machine Learning cơ bản 6_files/post.css">
+   <link rel="stylesheet" type="text/css" href="./Machine Learning cơ bản 6_files/monokai.css">
+   <link rel="stylesheet" type="text/css" href="./Machine Learning cơ bản 6_files/mystyle.css">
+   <!-- <link rel="stylesheet" type="text/css" href="/css/github.css" /> -->
+
+
+<title>Bài 6: K-nearest neighbors</title>
+<!-- <script>
+var pageProperties = {
+    
+    category: "Instance-based",
+    
+    url: "/2017/01/08/knn/",
+    title: "Bài 6: K-nearest neighbors",
+    scripts: [
+        
+    ],
+};
+
+</script>
+<script src="/scripts/modules.js" async></script>
+ -->
+
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/tiepvupsu/tiepvupsu.github.io/master/assets/latex/new_logo9.png" sizes="32x32">
+<link rel="canonical" href="https://machinelearningcoban.com/2017/01/08/knn/">
+<meta name="author" content="Tiep Vu ">
+
+
+   <meta property="og:title" content="Bài 6: K-nearest neighbors">
+   <meta property="og:site_name" content="Tiep Vu&#39;s blog">
+   <meta property="og:url" content="https://machinelearningcoban.com/2017/01/08/knn/">
+   <meta property="og:description" content="">
+   
+   <meta property="og:type" content="article">
+   <meta property="article:published_time" content="2017-01-08">
+   
+
+   <meta property="article:author" content="Tiep Vu">
+   <meta property="article:section" content="Instance-based">
+   
+      <meta property="article:tag" content="KNN">
+   
+      <meta property="article:tag" content="Regression">
+   
+      <meta property="article:tag" content="Classification">
+   
+      <meta property="article:tag" content="Supervised-learning">
+   
+      <meta property="article:tag" content="MNIST">
+   
+      <meta property="article:tag" content="Iris">
+   
+
+
+<link rel="alternate" type="application/atom+xml" title="Tiep Vu&#39;s blog - Atom feed" href="https://machinelearningcoban.com/feed.xml">
+
+
+
+<!-- Google Analytics -->
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-89509207-1', 'auto');
+// ga('send', 'pageview');
+ga('send', 'pageview', {
+'page': '/2017/01/08/knn/',
+'title': 'Bài 6: K-nearest neighbors'
+});
+</script>
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KTCD8BX');</script>
+<!-- End Google Tag Manager -->
+<script type="text/javascript" async="" src="./Machine Learning cơ bản 6_files/embed.js.download"></script><link rel="preload" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.04dd90af7bc65bdd97911fd885cc83a9.css"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.4d4c2bb66cc9fcd5a16c7ff1c1fbbe79.js"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.fef702bed571136dc98b1dd41e1b906f.js"><link rel="preload" as="script" href="https://disqus.com/next/config.js"><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent}.fb_dialog_close_icon:active{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent}.fb_dialog_loader{background-color:#f5f6f7;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{width:auto;height:auto;min-height:initial;min-width:initial;background:none}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{color:#fff;display:block;padding-top:20px;clear:both;font-size:18px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;bottom:0;left:0;right:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_mobile .fb_dialog_iframe{position:-webkit-sticky;top:0}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29487d;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f5f6f7;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-repeat:no-repeat;background-position:50% 50%;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://z-m-static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}
+.fb_customer_chat_bounce_in_v2{animation-duration:300ms;animation-name:fb_bounce_in_v2;transition-timing-function:ease-in}.fb_customer_chat_bounce_out_v2{animation-duration:300ms;animation-name:fb_bounce_out_v2;transition-timing-function:ease-in}.fb_customer_chat_bounce_in_v2_mobile_chat_started{animation-duration:300ms;animation-name:fb_bounce_in_v2_mobile_chat_started;transition-timing-function:ease-in}.fb_customer_chat_bounce_out_v2_mobile_chat_started{animation-duration:300ms;animation-name:fb_bounce_out_v2_mobile_chat_started;transition-timing-function:ease-in}.fb_customer_chat_bubble_pop_in{animation-duration:250ms;animation-name:fb_customer_chat_bubble_bounce_in_animation}.fb_customer_chat_bubble_animated_no_badge{box-shadow:0 3px 12px rgba(0, 0, 0, .15);transition:box-shadow 150ms linear}.fb_customer_chat_bubble_animated_no_badge:hover{box-shadow:0 5px 24px rgba(0, 0, 0, .3)}.fb_customer_chat_bubble_animated_with_badge{box-shadow:-5px 4px 14px rgba(0, 0, 0, .15);transition:box-shadow 150ms linear}.fb_customer_chat_bubble_animated_with_badge:hover{box-shadow:-5px 8px 24px rgba(0, 0, 0, .2)}.fb_invisible_flow{display:inherit;height:0;overflow-x:hidden;width:0}.fb_mobile_overlay_active{background-color:#fff;height:100%;overflow:hidden;position:fixed;visibility:hidden;width:100%}@keyframes fb_bounce_in_v2{0%{opacity:0;transform:scale(0, 0);transform-origin:bottom right}50%{transform:scale(1.03, 1.03);transform-origin:bottom right}100%{opacity:1;transform:scale(1, 1);transform-origin:bottom right}}@keyframes fb_bounce_in_v2_mobile_chat_started{0%{opacity:0;top:20px}100%{opacity:1;top:0}}@keyframes fb_bounce_out_v2{0%{opacity:1;transform:scale(1, 1);transform-origin:bottom right}100%{opacity:0;transform:scale(0, 0);transform-origin:bottom right}}@keyframes fb_bounce_out_v2_mobile_chat_started{0%{opacity:1;top:0}100%{opacity:0;top:20px}}@keyframes fb_customer_chat_bubble_bounce_in_animation{0%{bottom:6pt;opacity:0;transform:scale(0, 0);transform-origin:center}70%{bottom:18pt;opacity:1;transform:scale(1.2, 1.2)}100%{transform:scale(1, 1)}}</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><script src="./Machine Learning cơ bản 6_files/alfalfa.4a5fcca1fe50a757044dfd331b660625.js.download" async="" charset="UTF-8"></script><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style></head>
+
+<body><div id="MathJax_Message" style="display: none;"><a class="vglnk" href="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/config/TeX-MML-AM_CHTML.js" rel="nofollow"><span>https</span><span>://</span><span>cdnjs</span><span>.</span><span>cloudflare</span><span>.</span><span>com</span><span>/</span><span>ajax</span><span>/</span><span>libs</span><span>/</span><span>mathjax</span><span>/</span><span>2</span><span>.</span><span>7</span><span>.</span><span>1</span><span>/</span><span>config</span><span>/</span><span>TeX</span><span>-</span><span>MML</span><span>-</span><span>AM</span><span>_</span><span>CHTML</span><span>.</span><span>js</span></a></div>
+	<div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_https" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./Machine Learning cơ bản 6_files/mp2v3DK3INU(1).html" style="border: none;"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+    <br>
+    <div class="container">
+      	<div class="row">
+	        <div class="col-md-2 hidden-xs hidden-sm">
+	          	<a href="https://machinelearningcoban.com/">
+            <!-- <img width="80%" src="/images/logo.svg" /> -->
+            <!-- <img width="100%" src="/images/logoTet.png" /> -->
+            <!-- <img width="100%" src="/images/logo2.png" /> -->
+            <!-- <img width="100%" style="padding-bottom: 3mm;" src="/images/logo_new.png" /> </a> -->
+            <img width="100%" style="padding-bottom: 3mm;" src="./Machine Learning cơ bản 6_files/new_logo92.png"> </a>
+          <!-- <img width="100%" style="padding-bottom: 3mm;" src="/assets/latex/new_logo2_rau.png" /> </a> -->
+
+            <br>
+            <a href="https://machinelearningcoban.com/buymeacoffee">
+            <img width="100%" style="padding-bottom: 3mm;" src="./Machine Learning cơ bản 6_files/Buymeacoffee_blue.png">
+
+            <br>
+            </a><a href="https://machinelearningcoban.com/ebook">
+            <img width="100%" style="padding-bottom: 3mm;" src="./Machine Learning cơ bản 6_files/ebook_logo.png">
+
+
+            <!-- <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Buy Me a Coffee', '#074B80', 
+            'A40822MV');kofiwidget2.draw();</script>  --><!-- 
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_donations">
+            <input type="hidden" name="business" value="vuhuutiep@gmail.com">
+            <input type="hidden" name="lc" value="US">
+            <input type="hidden" name="item_name" value="I find machinelearningcoban.com helpful. I'd like to buy Tiep Vu a coffee ^^. (Thank you so much for your support.)">
+            <input type="hidden" name="no_note" value="0">
+            <input type="hidden" name="currency_code" value="USD">
+            <input type="hidden" name="bn" value="PP-DonationsBF:Buymeacoffee.png:NonHostedGuest">
+            <input type="image" src="/images/Buymeacoffee_blue.png" border="0" style="padding-bottom: -9mm;" width = 100% name="submit" alt="PayPal - The safer, easier way to pay online!">
+            </form> -->
+
+            <!-- <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Buy Me a Coffee', '#805007', 'A40822MV');kofiwidget2.draw();</script>  -->
+
+          </a>
+
+          <!-- Google search -->
+         <!--  <table border="0">
+          <div id = "top-widget" style="width: 292px; margin-left: -13.5px; margin-top: -10px; margin-bottom: -15px;">
+         <script>
+           (function() {
+             var cx = '012053542614118746585:ktgei4l2oek';
+             var gcse = document.createElement('script');
+             gcse.type = 'text/javascript';
+             gcse.async = true;
+             gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+             var s = document.getElementsByTagName('script')[0];
+             s.parentNode.insertBefore(gcse, s);
+           })();
+         </script>
+         <gcse:search></gcse:search>
+          </div>
+          </table> -->
+
+          <!-- <nav>
+          
+            <div class="header">Popular</div>
+            <ul>
+              <li> (**): > 10k views</li>
+              <li> (*) : > 5k views</li>
+            </ul>
+          </nav> -->
+          
+
+          
+          <nav>
+          
+            <div class="header">Latest by category</div>
+            <ul>
+              
+                
+              
+                
+              
+                
+              
+                
+                  
+                    <li><a style="text-align: left; color: #074B80;" href="https://machinelearningcoban.com/2017/01/08/knn/">6. K-nearest neighbors</a></li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+          </nav>
+          
+
+
+
+          <nav>
+            <div class="header">Latest</div>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/09/11/forum/">Diễn đàn</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/07/06/deeplearning/">36. Keras</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/06/22/deeplearning/">35. Lược sử Deep Learning</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/03/22/phuonghoagiang/">Con đường học Khoa học dữ liệu của một sinh viên Kinh tế</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/03/09/book/">Sách ML cơ bản</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2018/01/14/id3/">34. Decision Trees (1): ID3</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/08/31/evaluation/">33. Đánh giá hệ thống phân lớp</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/10/20/fundaml_vectors/">FundaML 3: Các mảng ngẫu nhiên</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/10/20/fundaml_matrices/">FundaML 2: Ma trận</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/10/12/fundaml_vectors/">FundaML 1: Mảng một chiều</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/09/24/fundaml/">FundaML.com</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/08/08/nbc/">32. Naive Bayes Classifier</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/08/05/phdlife/">Viết và nhận xét các bài báo khoa học</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/07/17/mlemap/">31. Maximum Likelihood và Maximum A Posteriori</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/lifesofar/">Con đường học Toán của tôi</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/07/09/prob/">30. Ôn tập Xác Suất</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/07/02/tl/">Q2. Transfer Learning</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/30/lda/">29. Linear Discriminant Analysis</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/22/qns1/">Q1. Quick Notes 1</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/21/pca2/">28. Principal Component Analysis (2/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/15/pca/">27. Principal Component Analysis (1/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/06/07/svd/">26. Singular Value Decomposition</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/05/31/matrixfactorization/">25. Matrix Factorization Collaborative Filtering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/05/24/collaborativefiltering/">24. Neighborhood-Based Collaborative Filtering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/05/17/contentbasedrecommendersys/">23. Content-based Recommendation Systems</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/28/multiclasssmv/">22. Multi-class SVM</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/22/kernelsmv/">21. Kernel SVM</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/13/softmarginsmv/">20. Soft Margin SVM</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/09/smv/">19. Support Vector Machine</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/04/02/duality/">18. Duality</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/03/19/convexopt/">17. Convex Optimization Problems</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/03/12/convexity/">16. Convex sets và convex functions</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/03/04/overfitting/">15. Overfitting</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/24/mlp/">14. Multi-layer Perceptron và Backpropagation</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/17/softmax/">13. Softmax Regression</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/11/binaryclassifiers/">12. Binary Classifiers</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/general/2017/02/06/featureengineering/">11. Feature Engineering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/02/02/howdoIcreatethisblog/"></a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/27/logisticregression/">10. Logistic Regression</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/21/perceptron/">9. Perceptron Learning Algorithm</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/16/gradientdescent2/">8. Gradient Descent (2/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/12/gradientdescent/">7. Gradient Descent (1/2)</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/08/knn/">6. K-nearest neighbors</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/04/kmeans2/">5. K-means Clustering - Applications</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2017/01/01/kmeans/">4. K-means Clustering</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2016/12/28/linearregression/">3. Linear Regression</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2016/12/27/categories/">2. Phân nhóm các thuật toán Machine Learning</a></li>
+              
+                <li><a style="text-align: left; color: #074B80" href="https://machinelearningcoban.com/2016/12/26/introduce/">1. Giới thiệu về Machine Learning</a></li>
+              
+            
+          </nav>
+
+          
+          
+          <!-- <img style = "transform: scaleX(1); width:100%; margin-left:00px;position: absolute;" src = "/images/mai.jpg"> -->
+         
+         <!--   
+            <nav>
+              <div class="header">Previous by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #074B80;" href="/2017/01/04/kmeans2/">Bài 5: K-means Clustering: Simple Applications</a></li>
+              </ul>
+            </nav>
+           
+           
+            <nav>
+              <div class="header">Next by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #074B80;" href="/2017/01/12/gradientdescent/">Bài 7: Gradient Descent (phần 1/2)</a></li>
+              </ul>
+            </nav>
+            -->
+		       
+	        </div>
+	        <div class="col-md-8 col-xs-12" style="z-index: 1">
+	        	 <!-- <br> -->
+ <nav class="navbar navbar-inverse" style="background-color: #074B80">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span> 
+      </button>
+      <a class="navbar-brand" href="https://machinelearningcoban.com/"><span style="color: #fff">Machine Learning cơ bản</span></a>
+        <!-- <form class="navbar-form navbar-left" role="search">
+            <div class="form-group" align="right">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">
+                <span></span>
+            </button>
+        </form> -->
+        
+
+
+    </div>
+    <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="https://machinelearningcoban.com/about/"><span style="color: #fff"> About</span></a></li>
+        <li><a href="https://machinelearningcoban.com/index/"><span style="color: #fff">Index</span></a></li>
+        <li><a href="https://machinelearningcoban.com/tags/"><span style="color: #fff">Tags</span></a></li>
+        <li><a href="https://machinelearningcoban.com/categories/"><span style="color: #fff">Categories</span></a></li>
+        <li><a href="https://machinelearningcoban.com/archive/"><span style="color: #fff">Archive</span></a></li>
+        <li><a href="https://machinelearningcoban.com/math/"><span style="color: #fff">Math</span></a></li>
+        <!-- <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScq3GkxM1I2fDevR7gth-O9QqxM7grf4AFc0WT1hFORv4flaw/viewform"><span style = "color: #fff">Survey</span></a></li> -->
+        <li><a href="https://machinelearningcoban.com/copyrights/"><span style="color: #fff">Copyrights</span></a></li>
+        <!-- <li><a href="/faqs/"><span style = "color: #fff">FAQs</span></a></li> -->
+        <li><a href="https://machinelearningcoban.com/ebook/"><span style="color: #fff">ebook</span></a></li>
+        <li><a href="https://machinelearningcoban.com/search/"><span style="color: #fff">Search</span></a></li>
+        <!-- <li><a href="https://github.com/tiepvupsu/tiepvupsu.github.io/blob/master/assets/latex/book.pdf"><span style = "color: #fff">Book</span></a></li> -->
+        <!-- <li><a href="https://www.facebook.com/groups/257768141347267/"><span style = "color: #fff">Forum</span></a></li> -->
+        <!-- <li><a href="/subscribe/">Subscribe</a></li> -->
+
+        <li> 
+      </li></ul>
+    </div>
+  </div>
+</nav>
+
+	            <!-- <div class = "row"> -->
+   <!-- <div class = "col-xs-12 hidden-md hidden-lg"> -->
+      <!-- previous and next posts -->
+      <div class="PageNavigation">
+         
+            <a class="prev" style="color: #074B80;" href="https://machinelearningcoban.com/2017/01/04/kmeans2/">« Bài 5: K-means Clustering: Simple Applications</a>
+         <!-- <hr> -->
+         
+         
+            <a class="next" style="float: right; color: #074B80;" href="https://machinelearningcoban.com/2017/01/12/gradientdescent/">Bài 7: Gradient Descent (phần 1/2) »</a>
+         <hr>
+         
+      </div>
+  <!-- </div> -->
+<!-- </div> -->
+<h1 itemprop="name" class="post-title">Bài 6: K-nearest neighbors</h1>
+
+
+<ul class="tags">
+   
+      <a href="https://machinelearningcoban.com/tags#KNN" class="tag">KNN</a>
+   
+      <a href="https://machinelearningcoban.com/tags#Regression" class="tag">Regression</a>
+   
+      <a href="https://machinelearningcoban.com/tags#Classification" class="tag">Classification</a>
+   
+      <a href="https://machinelearningcoban.com/tags#Supervised-learning" class="tag">Supervised-learning</a>
+   
+      <a href="https://machinelearningcoban.com/tags#MNIST" class="tag">MNIST</a>
+   
+      <a href="https://machinelearningcoban.com/tags#Iris" class="tag">Iris</a>
+   
+</ul>
+
+
+
+<span class="post-date" style="color: gray; font-style: italic;">Jan 8, 2017
+            </span>
+<!-- Main content -->
+<br>
+<br>
+
+
+
+<div itemprop="articleBody">
+   <!-- <div class="imgcap">
+<div >
+<a href = "/2017/01/08/knn/">
+    <img src ="https://upload.wikimedia.org/wikipedia/commons/5/52/Map1NN.png" align = "center" width="800"></a>
+</div>
+<div class="thecap"> Bản đồ của 1NN (Nguồn: <a href = "https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm">Wikipedia</a>) <br></div>
+</div> -->
+
+<p>Nếu như con người có kiểu học “nước đến chân mới nhảy”, thì trong Machine Learning cũng có một thuật toán như vậy.</p>
+
+<p><strong>Trong trang này:</strong>
+<!-- MarkdownTOC --></p>
+
+<ul>
+  <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#-gioi-thieu">1. Giới thiệu</a>
+    <ul>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#mot-cau-chuyen-vui">Một câu chuyện vui</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#k-nearest-neighbor">K-nearest neighbor</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#khoang-cach-trong-khong-gian-vector">Khoảng cách trong không gian vector</a></li>
+    </ul>
+  </li>
+  <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#-phan-tich-toan-hoc">2. Phân tích toán học</a></li>
+  <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#-vi-du-tren-python">3. Ví dụ trên Python</a>
+    <ul>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#bo-co-so-du-lieu-iris-iris-flower-dataset">Bộ cơ sở dữ liệu Iris (Iris flower dataset).</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#thi-nghiem">Thí nghiệm</a>
+        <ul>
+          <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#tach-training-va-test-sets">Tách training và test sets</a></li>
+          <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#phuong-phap-danh-gia-evaluation-method">Phương pháp đánh giá (evaluation method)</a></li>
+          <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#danh-trong-so-cho-cac-diem-lan-can">Đánh trọng số cho các điểm lân cận</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#-thao-luan">4. Thảo luận</a>
+    <ul>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#knn-cho-regression">KNN cho Regression</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#chuan-hoa-du-lieu">Chuẩn hóa dữ liệu</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#su-dung-cac-phep-do-khoang-cach-khac-nhau">Sử dụng các phép đo khoảng cách khác nhau</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#uu-diem-cua-knn">Ưu điểm của KNN</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#nhuoc-diem-cua-knn">Nhược điểm của KNN</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#tang-toc-cho-knn">Tăng tốc cho KNN</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#try-this-yourself">Try this yourself</a></li>
+      <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#source-code">Source code</a></li>
+    </ul>
+  </li>
+  <li><a href="https://machinelearningcoban.com/2017/01/08/knn/#-tai-lieu-tham-khao">5. Tài liệu tham khảo</a></li>
+</ul>
+
+<!-- /MarkdownTOC -->
+
+<p><a name="-gioi-thieu"></a></p>
+
+<h2 id="1-giới-thiệu">1. Giới thiệu</h2>
+
+<p><a name="mot-cau-chuyen-vui"></a></p>
+
+<h3 id="một-câu-chuyện-vui">Một câu chuyện vui</h3>
+
+<p>Có một anh bạn chuẩn bị đến ngày thi cuối kỳ. Vì môn này được mở tài liệu khi thi nên anh ta không chịu ôn tập để hiểu ý nghĩa của từng bài học và mối liên hệ giữa các bài. Thay vào đó, anh thu thập tất cả các tài liệu trên lớp, bao gồm ghi chép bài giảng (lecture notes), các slides và bài tập về nhà + lời giải. Để cho chắc, anh ta ra thư viện và các quán Photocopy quanh trường mua hết tất cả các loại tài liệu liên quan (<em>khá khen cho cậu này chịu khó tìm kiếm tài liệu</em>). Cuối cùng, anh bạn của chúng ta thu thập được một chồng cao tài liệu để mang vào phòng thi. 
+<!-- Thật không may, cậu ấy không biết rằng trong đống tài liệu mua từ quán Photocopy đó có nhiều bài cho đáp án sai.  --></p>
+
+<p>Vào ngày thi, anh tự tin mang chồng tài liệu vào phòng thi. Aha, đề này ít nhất mình phải được 8 điểm. Câu 1 giống hệt bài giảng trên lớp. Câu 2 giống hệt đề thi năm ngoái mà lời giải có trong tập tài liệu mua ở quán Photocopy. Câu 3 gần giống với bài tập về nhà. Câu 4 trắc nghiệm thậm chí cậu nhớ chính xác ba tài liệu có ghi đáp án. Câu cuối cùng, 1 câu khó nhưng anh đã từng nhìn thấy, chỉ là không nhớ ở đâu thôi.</p>
+
+<p>Kết quả cuối cùng, cậu ta được 4 điểm, vừa đủ điểm qua môn. Cậu làm chính xác câu 1 vì tìm được ngay trong tập ghi chú bài giảng. Câu 2 cũng tìm được đáp án nhưng lời giải của quán Photocopy sai! Câu ba thấy gần giống bài về nhà, chỉ khác mỗi một số thôi, cậu cho kết quả giống như thế luôn, vậy mà không được điểm nào. Câu 4 thì tìm được cả 3 tài liệu nhưng có hai trong đó cho đáp án A, cái còn lại cho B. Cậu chọn A và được điểm. Câu 5 thì không làm được dù còn tới 20 phút, vì tìm mãi chẳng thấy đáp án đâu - nhiều tài liệu quá cũng mệt!!</p>
+
+<p>Không phải ngẫu nhiên mà tôi dành ra ba đoạn văn để kể về chuyện học hành của anh chàng kia. Hôm nay tôi xin trình bày về một phương pháp trong Machine Learning, được gọi là K-nearest neighbor (hay KNN), một thuật toán được xếp vào loại lazy (machine) learning (máy lười học). Thuật toán này khá giống với cách học/thi của anh bạn kém may mắn kia.</p>
+
+<p><a name="k-nearest-neighbor"></a></p>
+
+<h3 id="k-nearest-neighbor">K-nearest neighbor</h3>
+
+<p>K-nearest neighbor là một trong những thuật toán supervised-learning đơn giản nhất (mà hiệu quả trong một vài trường hợp) trong Machine Learning. Khi training, thuật toán này <em>không học</em> một điều gì từ dữ liệu training (đây cũng là lý do thuật toán này được xếp vào loại <a href="https://en.wikipedia.org/wiki/Lazy_learning">lazy learning</a>), mọi tính toán được thực hiện khi nó cần dự đoán kết quả của dữ liệu mới. K-nearest neighbor có thể áp dụng được vào cả hai loại của bài toán Supervised learning là <a href="https://machinelearningcoban.com/2016/12/27/categories/#classification-phan-loai">Classification</a> và <a href="https://machinelearningcoban.com/2016/12/27/categories/#regression-hoi-quy">Regression</a>. KNN còn được gọi là một thuật toán <a href="https://en.wikipedia.org/wiki/Instance-based_learning">Instance-based hay Memory-based learning</a>.</p>
+
+<p>Có một vài khái niệm tương ứng người-máy như sau:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ngôn ngữ người</th>
+      <th>Ngôn ngữ Máy Học</th>
+      <th>in Machine Learning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Câu hỏi</td>
+      <td>Điểm dữ liệu</td>
+      <td>Data point</td>
+    </tr>
+    <tr>
+      <td>Đáp án</td>
+      <td>Đầu ra, nhãn</td>
+      <td>Output, Label</td>
+    </tr>
+    <tr>
+      <td>Ôn thi</td>
+      <td>Huấn luyện</td>
+      <td>Training</td>
+    </tr>
+    <tr>
+      <td>Tập tài liệu mang vào phòng thi</td>
+      <td>Tập dữ liệu tập huấn</td>
+      <td>Training set</td>
+    </tr>
+    <tr>
+      <td>Đề thi</td>
+      <td>Tập dữ liểu kiểm thử</td>
+      <td>Test set</td>
+    </tr>
+    <tr>
+      <td>Câu hỏi trong dề thi</td>
+      <td>Dữ liệu kiểm thử</td>
+      <td>Test data point</td>
+    </tr>
+    <tr>
+      <td>Câu hỏi có đáp án sai</td>
+      <td>Nhiễu</td>
+      <td>Noise, Outlier</td>
+    </tr>
+    <tr>
+      <td>Câu hỏi gần giống</td>
+      <td>Điểm dữ liệu gần nhất</td>
+      <td>Nearest Neighbor</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br>
+Với KNN, trong bài toán Classification, label của một điểm dữ liệu mới (hay kết quả của câu hỏi trong bài thi) được suy ra trực tiếp từ K điểm dữ liệu gần nhất trong training set. Label của một test data có thể được quyết định bằng major voting (bầu chọn theo số phiếu) giữa các điểm gần nhất, hoặc nó có thể được suy ra bằng cách đánh trọng số khác nhau cho mỗi trong các điểm gần nhất đó rồi suy ra label. Chi tiết sẽ được nêu trong phần tiếp theo.</p>
+
+<p>Trong bài toán Regresssion, đầu ra của một điểm dữ liệu sẽ bằng chính đầu ra của điểm dữ liệu đã biết gần nhất (trong trường hợp K=1), hoặc là trung bình có trọng số của đầu ra của những điểm gần nhất, hoặc bằng một mối quan hệ dựa trên khoảng cách tới các điểm gần nhất đó.</p>
+
+<p>Một cách ngắn gọn, KNN là thuật toán đi tìm đầu ra của một điểm dữ liệu mới bằng cách <em>chỉ</em> dựa trên thông tin của K điểm dữ liệu trong training set gần nó nhất (K-lân cận), <em>không quan tâm đến việc có một vài điểm dữ liệu trong những điểm gần nhất này là nhiễu</em>. Hình dưới đây là một ví dụ về KNN trong classification với K = 1.</p>
+
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 6_files/Map1NN.png" align="center">
+<div class="thecap"> Bản đồ của 1NN (Nguồn: <a href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm">Wikipedia</a>) <br></div>
+</div>
+
+<p>Ví dụ trên đây là bài toán Classification với 3 classes: Đỏ, Lam, Lục. Mỗi điểm dữ liệu mới (test data point) sẽ được gán label theo màu của điểm mà nó thuộc về. Trong hình này, có một vài vùng nhỏ xem lẫn vào các vùng lớn hơn khác màu. Ví dụ có một điểm màu Lục ở gần góc 11 giờ nằm giữa hai vùng lớn với nhiều dữ liệu màu Đỏ và Lam. Điểm này rất có thể là nhiễu. Dẫn đến nếu dữ liệu test rơi vào vùng này sẽ có nhiều khả năng cho kết quả không chính xác.</p>
+
+<p><a name="khoang-cach-trong-khong-gian-vector"></a></p>
+
+<h3 id="khoảng-cách-trong-không-gian-vector">Khoảng cách trong không gian vector</h3>
+
+<p>Trong không gian một chiều, khoảng cách giữa hai điểm là trị tuyệt đối giữa hiệu giá trị của hai điểm đó. Trong không gian nhiều chiều, khoảng cách giữa hai điểm có thể được định nghĩa bằng nhiều hàm số khác nhau, trong đó độ dài đường thằng nổi hai điểm chỉ là một trường hợp đặc biệt trong đó. Nhiều thông tin bổ ích (cho Machine Learning) có thể được tìm thấy tại <a href="https://machinelearningcoban.com/math/#-norms-chuan">Norms (chuẩn) của vector</a> trong tab <a href="https://machinelearningcoban.com/math/">Math</a>.</p>
+
+<p><a name="-phan-tich-toan-hoc"></a></p>
+
+<h2 id="2-phân-tích-toán-học">2. Phân tích toán học</h2>
+<p>Thuật toán KNN rất dễ hiểu nên sẽ phần “Phân tích toán học” này sẽ chỉ có 3 câu. Tôi trực tiếp đi vào các ví dụ. Có một điều đáng lưu ý là KNN phải <em>nhớ</em> tất cả các điểm dữ liệu training, việc này không được lợi về cả bộ nhớ và thời gian tính toán - giống như khi cậu bạn của chúng ta không tìm được câu trả lời cho câu hỏi cuối cùng.</p>
+
+<p><a name="-vi-du-tren-python"></a></p>
+
+<h2 id="3-ví-dụ-trên-python">3. Ví dụ trên Python</h2>
+
+<p><a name="bo-co-so-du-lieu-iris-iris-flower-dataset"></a></p>
+
+<h3 id="bộ-cơ-sở-dữ-liệu-iris-iris-flower-dataset">Bộ cơ sở dữ liệu Iris (Iris flower dataset).</h3>
+
+<p><a href="https://en.wikipedia.org/wiki/Iris_flower_data_set">Iris flower dataset</a> là một bộ dữ liệu nhỏ (nhỏ hơn rất nhiều so với <a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#bo-co-so-du-lieu-mnist">MNIST</a>. Bộ dữ liệu này bao gồm thông tin của ba loại hoa Iris (một loài hoa lan) khác nhau: Iris setosa, Iris virginica và Iris versicolor. Mỗi loại có 50 bông hoa được đo với dữ liệu là 4 thông tin: chiều dài, chiều rộng đài hoa (sepal), và chiều dài, chiều rộng cánh hoa (petal). Dưới đây là ví dụ về hình ảnh của ba loại hoa. (Chú ý, đây không phải là bộ cơ sở dữ liệu ảnh như MNIST, mỗi điểm dữ liệu trong tập này chỉ là một vector 4 chiều).</p>
+
+<div class="imgcap">
+<img src="./Machine Learning cơ bản 6_files/iris.png" align="center" width="800">
+<div class="thecap"> Ví dụ về Iris flower dataset (Nguồn: <a href="https://en.wikipedia.org/wiki/Iris_flower_data_set">Wikipedia</a>) <br></div>
+</div>
+
+<p>Bộ dữ liệu nhỏ này thường được sử dụng trong nhiều thuật toán Machine Learning trong các lớp học. Tôi sẽ giải thích lý do không chọn MNIST vào phần sau.</p>
+
+<p><a name="thi-nghiem"></a></p>
+
+<h3 id="thí-nghiệm">Thí nghiệm</h3>
+
+<p>Trong phần này, chúng ta sẽ tách 150 dữ liệu trong Iris flower dataset ra thành 2 phần, gọi là <em>training set</em> và <em>test set</em>. Thuật toán KNN sẽ dựa vào trông tin ở <em>training set</em> để dự đoán xem mỗi dữ liệu trong <em>test set</em> tương ứng với loại hoa nào. Dữ liệu được dự đoán này sẽ được đối chiếu với loại hoa thật của mỗi dữ liệu trong <em>test set</em> để đánh giá hiệu quả của KNN.</p>
+
+<p><strong>Trước tiên, chúng ta cần khai báo vài thư viện</strong>.</p>
+
+<p>Iris flower dataset có sẵn trong thư viện <a href="http://scikit-learn.org/">scikit-learn</a>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">neighbors</span><span class="p">,</span> <span class="n">datasets</span>
+</code></pre></div></div>
+
+<p><strong>Tiếp theo, chúng ta load dữ liệu và hiện thị vài dữ liệu mẫu</strong>. Các class được gán nhãn là 0, 1, và 2.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="n">iris_X</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span>
+<span class="n">iris_y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+<span class="k">print</span> <span class="s">'Number of classes: </span><span class="si">%</span><span class="s">d'</span> <span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">iris_y</span><span class="p">))</span>
+<span class="k">print</span> <span class="s">'Number of data points: </span><span class="si">%</span><span class="s">d'</span> <span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">iris_y</span><span class="p">)</span>
+
+
+<span class="n">X0</span> <span class="o">=</span> <span class="n">iris_X</span><span class="p">[</span><span class="n">iris_y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,:]</span>
+<span class="k">print</span> <span class="s">'</span><span class="se">\n</span><span class="s">Samples from class 0:</span><span class="se">\n</span><span class="s">'</span><span class="p">,</span> <span class="n">X0</span><span class="p">[:</span><span class="mi">5</span><span class="p">,:]</span>
+
+<span class="n">X1</span> <span class="o">=</span> <span class="n">iris_X</span><span class="p">[</span><span class="n">iris_y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,:]</span>
+<span class="k">print</span> <span class="s">'</span><span class="se">\n</span><span class="s">Samples from class 1:</span><span class="se">\n</span><span class="s">'</span><span class="p">,</span> <span class="n">X1</span><span class="p">[:</span><span class="mi">5</span><span class="p">,:]</span>
+
+<span class="n">X2</span> <span class="o">=</span> <span class="n">iris_X</span><span class="p">[</span><span class="n">iris_y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,:]</span>
+<span class="k">print</span> <span class="s">'</span><span class="se">\n</span><span class="s">Samples from class 2:</span><span class="se">\n</span><span class="s">'</span><span class="p">,</span> <span class="n">X2</span><span class="p">[:</span><span class="mi">5</span><span class="p">,:]</span>
+
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Number of classes: 3
+Number of data points: 150
+
+Samples from class 0:
+[[ 5.1  3.5  1.4  0.2]
+ [ 4.9  3.   1.4  0.2]
+ [ 4.7  3.2  1.3  0.2]
+ [ 4.6  3.1  1.5  0.2]
+ [ 5.   3.6  1.4  0.2]]
+
+Samples from class 1:
+[[ 7.   3.2  4.7  1.4]
+ [ 6.4  3.2  4.5  1.5]
+ [ 6.9  3.1  4.9  1.5]
+ [ 5.5  2.3  4.   1.3]
+ [ 6.5  2.8  4.6  1.5]]
+
+Samples from class 2:
+[[ 6.3  3.3  6.   2.5]
+ [ 5.8  2.7  5.1  1.9]
+ [ 7.1  3.   5.9  2.1]
+ [ 6.3  2.9  5.6  1.8]
+ [ 6.5  3.   5.8  2.2]]
+</code></pre></div></div>
+
+<p>Nếu nhìn vào vài dữ liệu mẫu, chúng ta thấy rằng hai cột cuối mang khá nhiều thông tin giúp chúng ta có thể  phân biệt được chúng. Chúng ta dự đoán rằng kết quả classification cho cơ sở dữ liệu này sẽ tương đối cao.</p>
+
+<p><a name="tach-training-va-test-sets"></a></p>
+
+<h4 id="tách-training-và-test-sets">Tách training và test sets</h4>
+<p>Giả sử chúng ta muốn dùng 50 điểm dữ liệu cho test set, 100 điểm còn lại cho training set. Scikit-learn có một hàm số cho phép chúng ta ngẫu nhiên lựa chọn các điểm này, như sau:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+     <span class="n">iris_X</span><span class="p">,</span> <span class="n">iris_y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="s">"Training size: </span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">"Test size    : </span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Training size: 100
+Test size    : 50
+</code></pre></div></div>
+
+<p>Sau đây, tôi trước hết xét trường hợp đơn giản K = 1, tức là với mỗi điểm test data, ta chỉ xét 1 điểm training data gần nhất và lấy label của điểm đó để dự đoán cho điểm test này.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clf</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="s">"Print results for 20 test data points:"</span>
+<span class="k">print</span> <span class="s">"Predicted labels: "</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">"Ground truth    : "</span><span class="p">,</span> <span class="n">y_test</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Print results for first 20 test data points:
+Predicted labels:  [2 1 2 2 1 2 2 0 2 0 2 0 1 0 0 2 2 0 2 0]
+Ground truth    :  [2 1 2 2 1 2 2 0 2 0 1 0 1 0 0 2 1 0 2 0]
+</code></pre></div></div>
+
+<p><a name="ground-truth"></a>
+Kết quả cho thấy label dự đoán gần giống với label thật của test data, chỉ có 2 điểm trong số 20 điểm được hiển thị có kết quả sai lệch. Ở đây chúng ta làm quen với khái niệm mới: <em>ground truth</em>. Một cách đơn giản, <em>ground truth</em> chính là nhãn/label/đầu ra <em>thực sự</em> của các điểm trong test data. Khái niệm này được dùng nhiều trong Machine Learning, hy vọng lần tới các bạn gặp thì sẽ nhớ ngay nó là gì.</p>
+
+<p><a name="phuong-phap-danh-gia-evaluation-method"></a></p>
+
+<h4 id="phương-pháp-đánh-giá-evaluation-method">Phương pháp đánh giá (evaluation method)</h4>
+<p>Để đánh giá độ chính xác của thuật toán KNN classifier này, chúng ta xem xem có bao nhiêu điểm trong test data được dự đoán đúng. Lấy số lượng này chia cho tổng số lượng trong tập test data sẽ ra độ chính xác. Scikit-learn cung cấp hàm số <a href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html"><code class="highlighter-rouge">accuracy_score</code></a> để thực hiện công việc này.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="k">print</span> <span class="s">"Accuracy of 1NN: </span><span class="si">%.2</span><span class="s">f </span><span class="si">%%</span><span class="s">"</span> <span class="o">%</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Accuracy of 1NN: 94.00 %
+</code></pre></div></div>
+
+<p>1NN đã cho chúng ta kết quả là 94%, không tệ! Chú ý rằng đây là một cơ sở dữ liệu dễ vì chỉ với dữ liệu ở hai cột cuối cùng, chúng ta đã có thể suy ra quy luật. Trong ví dụ này, tôi sử dụng <code class="highlighter-rouge">p = 2</code> nghĩa là khoảng cách ở đây được tính là khoảng cách theo <a href="https://machinelearningcoban.com/math/#norm2">norm 2</a>. Các bạn cũng có thể thử bằng cách thay <code class="highlighter-rouge">p = 1</code> cho <a href="https://machinelearningcoban.com/math/#norm0">norm 1</a>, hoặc các gía trị <code class="highlighter-rouge">p</code> khác cho norm khác. (Xem thêm <a href="http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html">sklearn.neighbors.KNeighborsClassifier</a>)</p>
+
+<p>Nhận thấy rằng chỉ xét 1 điểm gần nhất có thể dẫn đến kết quả sai nếu điểm đó là nhiễu. Một cách có thể làm tăng độ chính xác là tăng số lượng điểm lân cận lên, ví dụ 10 điểm, và xem xem trong 10 điểm gần nhất, class nào chiếm đa số thì dự đoán kết quả là class đó. Kỹ thuật dựa vào đa số này được gọi là major voting.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clf</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="s">"Accuracy of 10NN with major voting: </span><span class="si">%.2</span><span class="s">f </span><span class="si">%%</span><span class="s">"</span> <span class="o">%</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Accuracy of 10NN with major voting: 98.00 %
+</code></pre></div></div>
+
+<p>Kết quả đã tăng lên 98%, rất tốt!</p>
+
+<p><a name="danh-trong-so-cho-cac-diem-lan-can"></a></p>
+
+<h4 id="đánh-trọng-số-cho-các-điểm-lân-cận">Đánh trọng số cho các điểm lân cận</h4>
+
+<p>Là một kẻ tham lam, tôi chưa muốn dừng kết quả ở đây vì thấy rằng mình vẫn có thể cải thiện được. Trong kỹ thuật major voting bên trên, mỗi trong 10 điểm gần nhất được coi là có vai trò như nhau và giá trị <em>lá phiếu</em> của mỗi điểm này là như nhau. Tôi cho rằng như thế là không công bằng, vì rõ ràng rằng những điểm gần hơn nên có trọng số cao hơn (<em>càng thân cận thì càng tin tưởng</em>). Vậy nên tôi sẽ đánh trọng số khác nhau cho mỗi trong 10 điểm gần nhất này. Cách đánh trọng số phải thoải mãn điều kiện là một điểm càng gần điểm test data thì phải được đánh trọng số càng cao (tin tưởng hơn). Cách đơn giản nhất là lấy nghịch đảo của khoảng cách này. (Trong trường hợp test data trùng với 1 điểm dữ liệu trong training data, tức khoảng cách bằng 0, ta lấy luôn label của điểm training data).</p>
+
+<p>Scikit-learn giúp chúng ta đơn giản hóa việc này bằng cách gán gía trị <code class="highlighter-rouge">weights = 'distance'</code>. (Giá trị mặc định của <code class="highlighter-rouge">weights</code> là <code class="highlighter-rouge">'uniform'</code>, tương ứng với việc coi tất cả các điểm lân cận có giá trị như nhau như ở trên).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clf</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="s">'distance'</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="s">"Accuracy of 10NN (1/distance weights): </span><span class="si">%.2</span><span class="s">f </span><span class="si">%%</span><span class="s">"</span> <span class="o">%</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Accuracy of 10NN (1/distance weights): 100.00 %
+</code></pre></div></div>
+
+<p>Aha, 100%.</p>
+
+<p><strong>Chú ý:</strong> Ngoài 2 phương pháp đánh trọng số <code class="highlighter-rouge">weights = 'uniform'</code> và <code class="highlighter-rouge">weights = 'distance'</code> ở trên, scikit-learn còn cung cấp cho chúng ta một cách để đánh trọng số một cách tùy chọn. Ví dụ, một cách đánh trọng số phổ biến khác trong Machine Learning là:</p>
+
+<p>\[
+w_i = \exp \left( \frac{-||\mathbf{x} - \mathbf{x}_i||_2^2}{\sigma^2} \right)
+\]
+<!-- \\[
+w_i = \exp{- \|\|\mathbf{x} - \mathbf{x}_i\|\|_2^2}{\sigma^2}}
+\\] --></p>
+
+<p>trong đó \(\mathbf{x}\) là test data, \(\mathbf{x}_i\) là một điểm trong K-lân cận của \(\mathbf{x}\), \(w_i\) là trọng số của điểm đó (ứng với điểm dữ liệu đang xét \(\mathbf{x}\)), \(\sigma\) là một số dương. Nhận thấy rằng hàm số này cũng thỏa mãn điều kiện: điểm càng gần \(\mathbf{x}\) thì trọng số càng cao (cao nhất bằng 1). Với hàm số này, chúng ta có thể lập trình như sau:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">myweight</span><span class="p">(</span><span class="n">distances</span><span class="p">):</span>
+    <span class="n">sigma2</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span> <span class="c"># we can change this number</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">distances</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">sigma2</span><span class="p">)</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">myweight</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="s">"Accuracy of 10NN (customized weights): </span><span class="si">%.2</span><span class="s">f </span><span class="si">%%</span><span class="s">"</span> <span class="o">%</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Accuracy of 10NN (customized weights): 98.00 %
+</code></pre></div></div>
+
+<p>Trong trường hợp này, kết quả tương đương với kỹ thuật major voting. Để đánh giá chính xác hơn kết quả của KNN với K khác nhau, cách định nghĩa khoảng cách khác nhau và cách đánh trọng số khác nhau, chúng ta cần thực hiện quá trình trên với nhiều cách chia dữ liệu <em>training</em> và <em>test</em> khác nhau rồi lấy kết quả trung bình, vì rất có thể dữ liệu phân chia trong 1 trường hợp cụ thể là rất tốt hoặc rất xấu (bias). Đây cũng là cách thường được dùng khi đánh giá hiệu năng của một thuật toán cụ thể nào đó.</p>
+
+<p><a name="-thao-luan"></a></p>
+
+<h2 id="4-thảo-luận">4. Thảo luận</h2>
+
+<p><a name="knn-cho-regression"></a></p>
+
+<h3 id="knn-cho-regression">KNN cho Regression</h3>
+<p>Với bài toán Regression, chúng ta cũng hoàn toàn có thể sử dụng phương pháp tương tự: ước lượng đầu ra dựa trên đầu ra và khoảng cách của các điểm trong K-lân cận. Việc ước lượng như thế nào các bạn có thể tự định nghĩa tùy vào từng bài toán.</p>
+
+<div class="imgcap">
+<!-- <img src ="/assets/knn/knnR.png" align = "center"> -->
+<img src="./Machine Learning cơ bản 6_files/sphx_glr_plot_regression_001.png" align="center">
+<div class="thecap"> KNN cho bài toán Regression  (Nguồn: <a href="http://scikit-learn.org/stable/auto_examples/neighbors/plot_regression.html#sphx-glr-auto-examples-neighbors-plot-regression-py">Nearest Neighbors regression</a>) <br></div>
+</div>
+
+<p><a name="chuan-hoa-du-lieu"></a></p>
+
+<h3 id="chuẩn-hóa-dữ-liệu">Chuẩn hóa dữ liệu</h3>
+<p>Khi có một thuộc tính trong dữ liệu (hay phần tử trong vector) lớn hơn các thuộc tính khác rất nhiều (ví dụ thay vì đo bằng cm thì một kết quả lại tính bằng mm), khoảng cách giữa các điểm sẽ phụ thuộc vào thuộc tính này rất nhiều. Để có được kết quả chính xác hơn, một kỹ thuật thường được dùng là <em>Data Normalization</em> (chuẩn hóa dữ liệu) để đưa các thuộc tính có đơn vị đo khác nhau về cùng một khoảng giá trị, thường là từ 0 đến 1, trước khi thực hiện KNN. Có nhiều kỹ thuật chuẩn hóa khác nhau, các bạn sẽ được thấy khi tiếp tục theo dõi Blog này. Các kỹ thuật chuẩn hóa được áp dụng với không chỉ KNN mà còn với hầu hết các thuật toán khác.</p>
+
+<p><a name="su-dung-cac-phep-do-khoang-cach-khac-nhau"></a></p>
+
+<h3 id="sử-dụng-các-phép-đo-khoảng-cách-khác-nhau">Sử dụng các phép đo khoảng cách khác nhau</h3>
+<p>Ngoài norm 1 và norm 2 tôi giới thiệu trong bài này, còn rất nhiều các khoảng cách khác nhau có thể được dùng. Một ví dụ đơn giản là đếm số lượng thuộc tính khác nhau giữa hai điểm dữ liệu. Số này càng nhỏ thì hai điểm càng gần nhau. Đây chính là <a href="https://machinelearningcoban.com/math/#norm0">giả chuẩn 0</a> mà tôi đã giới thiệu trong Tab <a href="https://machinelearningcoban.com/math/">Math</a>.</p>
+
+<p><a name="uu-diem-cua-knn"></a></p>
+
+<h3 id="ưu-điểm-của-knn">Ưu điểm của KNN</h3>
+
+<ol>
+  <li>Độ phức tạp tính toán của quá trình training là bằng 0.</li>
+  <li>Việc dự đoán kết quả của dữ liệu mới rất đơn giản.</li>
+  <li>Không cần giả sử gì về phân phối của các class.</li>
+</ol>
+
+<p><a name="nhuoc-diem-cua-knn"></a></p>
+
+<h3 id="nhược-điểm-của-knn">Nhược điểm của KNN</h3>
+
+<ol>
+  <li>KNN rất nhạy cảm với nhiễu khi K nhỏ.</li>
+  <li>Như đã nói, KNN là một thuật toán mà mọi tính toán đều nằm ở khâu test. Trong đó việc tính khoảng cách tới <em>từng</em> điểm dữ liệu trong training set sẽ tốn rất nhiều thời gian, đặc biệt là với các cơ sở dữ liệu có số chiều lớn và có nhiều điểm dữ liệu. Với K càng lớn thì độ phức tạp cũng sẽ tăng lên. Ngoài ra, việc lưu toàn bộ dữ liệu trong bộ nhớ cũng ảnh hưởng tới hiệu năng của KNN.</li>
+</ol>
+
+<p><a name="tang-toc-cho-knn"></a></p>
+
+<h3 id="tăng-tốc-cho-knn">Tăng tốc cho KNN</h3>
+<p>Ngoài việc tính toán khoảng cách từ một điểm test data đến tất cả các điểm trong traing set (Brute Force), có một số thuật toán khác giúp tăng tốc việc tìm kiếm này. Bạn đọc có thẻ tìm kiếm thêm với hai từ khóa: <a href="http://pointclouds.org/documentation/tutorials/kdtree_search.php">K-D Tree</a> và <a href="https://en.wikipedia.org/wiki/Ball_tree">Ball Tree</a>. Tôi xin dành phần này cho độc giả tự tìm hiểu, và sẽ quay lại nếu có dịp. Chúng ta vẫn còn những thuật toán quan trọng hơn khác cần nhiều sự quan tâm hơn.</p>
+
+<p><a name="try-this-yourself"></a></p>
+
+<h3 id="try-this-yourself">Try this yourself</h3>
+
+<p>Tôi có viết một đoạn code ngắn để thực hiện việc Classification cho cơ sở dữ liệu <a href="https://machinelearningcoban.com/2017/01/04/kmeans2/#bo-co-so-du-lieu-mnist">MNIST</a>. Các bạn hãy download toàn bộ bộ dữ liệu này về vì sau này chúng ta còn dùng nhiều, chạy thử, comment kết quả và nhận xét của các bạn vào phần comment bên dưới. Để trả lời cho câu hỏi vì sao tôi không chọn cơ sở dữ liệu này làm ví dụ, bạn đọc có thể tự tìm ra đáp án khi chạy xong đoạn code này.</p>
+
+<p>Enjoy!</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># %reset</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span> 
+<span class="kn">from</span> <span class="nn">mnist</span> <span class="kn">import</span> <span class="n">MNIST</span> <span class="c"># require `pip install python-mnist`</span>
+<span class="c"># <a class="vglnk" href="https://pypi.python.org/pypi/python-mnist/" rel="nofollow"><span>https</span><span>://</span><span>pypi</span><span>.</span><span>python</span><span>.</span><span>org</span><span>/</span><span>pypi</span><span>/</span><span>python</span><span>-</span><span>mnist</span><span>/</span></a></span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">neighbors</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c"># you need to download the MNIST dataset first</span>
+<span class="c"># at: <a class="vglnk" href="http://yann.lecun.com/exdb/mnist/" rel="nofollow"><span>http</span><span>://</span><span>yann</span><span>.</span><span>lecun</span><span>.</span><span>com</span><span>/</span><span>exdb</span><span>/</span><span>mnist</span><span>/</span></a></span>
+<span class="n">mndata</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="s">'../MNIST/'</span><span class="p">)</span> <span class="c"># path to your MNIST folder </span>
+<span class="n">mndata</span><span class="o">.</span><span class="n">load_testing</span><span class="p">()</span>
+<span class="n">mndata</span><span class="o">.</span><span class="n">load_training</span><span class="p">()</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">mndata</span><span class="o">.</span><span class="n">test_images</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">mndata</span><span class="o">.</span><span class="n">train_images</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mndata</span><span class="o">.</span><span class="n">test_labels</span><span class="p">)</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mndata</span><span class="o">.</span><span class="n">train_labels</span><span class="p">)</span>
+
+
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">"Accuracy of 1NN for MNIST: </span><span class="si">%.2</span><span class="s">f </span><span class="si">%%</span><span class="s">"</span> <span class="o">%</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="k">print</span> <span class="s">"Running time: </span><span class="si">%.2</span><span class="s">f (s)"</span> <span class="o">%</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><a name="source-code"></a></p>
+
+<h3 id="source-code">Source code</h3>
+<p>iPython Notebook cho bài này có thể <a href="https://github.com/tiepvupsu/tiepvupsu.github.io/tree/master/assets/knn/KNN.ipynb">download tại đây</a>.</p>
+
+<p><a name="-tai-lieu-tham-khao"></a></p>
+
+<h2 id="5-tài-liệu-tham-khảo">5. Tài liệu tham khảo</h2>
+
+<ol>
+  <li>
+    <p><a href="http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestNeighbors.html#sklearn.neighbors.NearestNeighbors">sklearn.neighbors.NearestNeighbors</a></p>
+  </li>
+  <li>
+    <p><a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html">sklearn.model_selection.train_test_split</a></p>
+  </li>
+  <li>
+    <p><a href="http://machinelearningmastery.com/tutorial-to-implement-k-nearest-neighbors-in-python-from-scratch/">Tutorial To Implement k-Nearest Neighbors in Python From Scratch</a></p>
+  </li>
+</ol>
+
+</div>
+
+<hr> 
+<em>Nếu có câu hỏi, Bạn có thể để lại comment bên dưới hoặc trên <a href="https://www.facebook.com/groups/257768141347267/">Forum</a> để nhận được câu trả lời sớm hơn.</em>
+<br>
+<em>Bạn đọc có thể ủng hộ blog qua <a href="https://machinelearningcoban.com/buymeacoffee/">'Buy me a cofee'</a> ở góc trên bên trái của blog.
+</em>
+
+<br>
+<em>Tôi vừa hoàn thành cuốn ebook 'Machine Learning cơ bản', bạn có thể đặt sách <a href="https://machinelearningcoban.com/ebook/">tại đây</a>.
+
+Cảm ơn bạn.</em>
+
+<hr>
+
+<!-- previous and next posts -->
+<div class="PageNavigation">
+   
+      <a class="prev" style="color: #204081;" href="https://machinelearningcoban.com/2017/01/04/kmeans2/">« Bài 5: K-means Clustering: Simple Applications</a>
+   
+   
+      <a class="next" style="float: right; color: #204081;" href="https://machinelearningcoban.com/2017/01/12/gradientdescent/">Bài 7: Gradient Descent (phần 1/2) »</a>
+   
+</div>
+
+
+<!-- disqus comments -->
+
+      <hr>
+   
+<div id="disqus_thread"><iframe id="dsq-app5828" name="dsq-app5828" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" sandbox="allow-forms allow-popups allow-same-origin allow-scripts" width="100%" src="./Machine Learning cơ bản 6_files/saved_resource(2).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 576px !important;"></iframe><iframe id="dsq-app5825" name="dsq-app5825" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Machine Learning cơ bản 6_files/saved_resource(3).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 5497px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="dsq-app5830" name="dsq-app5830" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" sandbox="allow-forms allow-popups allow-same-origin allow-scripts" width="100%" src="./Machine Learning cơ bản 6_files/saved_resource(4).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 0px !important;"></iframe></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'tiepvu';
+  var disqus_identifier = 'tiepvupsu.github.io' + '/2017/01/08/knn/';
+
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="<a class="vglnk" href="http://disqus.com/?ref_noscript" rel="nofollow"><span>http</span><span>://</span><span>disqus</span><span>.</span><span>com</span><span>/?</span><span>ref</span><span>_</span><span>noscript</span></a>">comments powered by Disqus.</a></noscript>
+
+
+    <script id="dsq-count-scr" src="./Machine Learning cơ bản 6_files/count.js.download" async=""></script>
+
+
+
+
+
+   <!-- Start of StatCounter Code for Default Guide -->
+<script type="text/javascript">
+var sc_project=11213322; 
+var sc_invisible=0; 
+var sc_security="1ee84003"; 
+var sc_text=2; 
+var scJsHost = (("https:" == document.location.protocol) ?
+"https://secure." : "http://www.");
+document.write("Total visits: <sc"+"ript type='text/javascript' src='" +
+scJsHost+
+"statcounter.com/counter/counter.js'> </"+"script>");
+</script>Total visits: <script type="text/javascript" src="./Machine Learning cơ bản 6_files/counter.js.download"> </script><script src="./Machine Learning cơ bản 6_files/text.php"></script>29,869
+
+<noscript><div class="statcounter"><a title="web analytics"
+href="<a class="vglnk" href="http://statcounter.com/" rel="nofollow"><span>http</span><span>://</span><span>statcounter</span><span>.</span><span>com</span><span>/</span></a>" target="_blank"><img
+class="statcounter"
+src="//c.statcounter.com/11213322/0/1ee84003/0/" alt="web
+analytics"></a> </div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+
+<!-- <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+
+<script type="text/javascript" async="" src="./Machine Learning cơ bản 6_files/MathJax.js.download">
+</script>
+<!-- 
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?...">
+</script> -->
+	        </div>
+	        <div class="col-md-2 hidden-xs hidden-sm">
+	        	
+          <!-- Google search -->
+<!--           <table border="0">
+          <div id = "top-widget" style="width: 252px; margin-left: -13.5px; margin-top: -10px; margin-bottom: -15px;">
+         <script>
+           (function() {
+             var cx = '012053542614118746585:ktgei4l2oek';
+             var gcse = document.createElement('script');
+             gcse.type = 'text/javascript';
+             gcse.async = true;
+             gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+             var s = document.getElementsByTagName('script')[0];
+             s.parentNode.insertBefore(gcse, s);
+           })();
+         </script>
+         <gcse:search></gcse:search>
+          </div>
+          </table> -->
+
+          
+
+         <!--  
+          <nav>
+          
+            <div class="header">Latest by category</div>
+            <ul>
+              
+                
+              
+                
+              
+                
+              
+                
+                  
+                    <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif; color: #204081;" href="/2017/01/08/knn/">Bài 6: K-nearest neighbors</a></li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+          </nav>
+          
+
+
+
+          <nav>
+            <div class="header">Latest</div>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/09/11/forum/">Giới thiệu Diễn đàn Machine Learning cơ bản</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/07/06/deeplearning/">Bài 36. Giới thiệu về Keras</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/06/22/deeplearning/">Bài 35: Lược sử Deep Learning</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/03/22/phuonghoagiang/">Bạn đọc viết: Con đường học Khoa học dữ liệu của một sinh viên Kinh tế</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/03/09/book/">Sách Machine Learning cơ bản</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2018/01/14/id3/">Bài 34: Decision Trees (1): Iterative Dichotomiser 3</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/08/31/evaluation/">Bài 33: Các phương pháp đánh giá một hệ thống phân lớp</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/10/20/fundaml_vectors/">FundaML 3: Làm việc với các mảng ngẫu nhiên</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/10/20/fundaml_matrices/">FundaML 2: Làm việc với ma trận</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/10/12/fundaml_vectors/">FundaML 1: Làm việc với mảng một chiều</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/09/24/fundaml/">Giới thiệu trang web FundaML.com</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/08/08/nbc/">Bài 32: Naive Bayes Classifier</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/08/05/phdlife/">PhD life 1: Quá trình viết và nhận xét các bài báo khoa học</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/07/17/mlemap/">Bài 31: Maximum Likelihood và Maximum A Posteriori estimation</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/lifesofar/">Con đường học Toán của tôi</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/07/09/prob/">Bài 30: Ôn tập Xác Suất cho Machine Learning</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/07/02/tl/">Quick Note 2: Transfer Learning cho bài toán phân loại ảnh</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/06/30/lda/">Bài 29: Linear Discriminant Analysis</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/06/22/qns1/">Quick Notes 1</a></li>
+              
+                <li><a style="text-align: left; font-family: 'Open Sans Condensed', sans-serif;color: #204081"  href="/2017/06/21/pca2/">Bài 28: Principal Component Analysis (phần 2/2)</a></li>
+              
+            </ul>
+          </nav> -->
+
+          <aside class="social">
+          <div class="header">Share</div>
+          <div class="share-page">
+    <!-- <b>Share this on:</b>  <br> -->
+
+    <!-- Facebook -->
+    <!-- <a href="https://facebook.com/sharer/sharer.php?u=https://machinelearningcoban.com/2017/01/08/knn/" rel="nofollow" target="_blank" title="Share on Facebook"><img src = "/assets/images/facebook.png" width="25"></a> -->
+
+    <div class="fb-share-button fb_iframe_widget" data-href="https://machinelearningcoban.com/2017/01/08/knn/" data-layout="button_count" data-size="small" data-mobile-iframe="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=&amp;container_width=132&amp;href=https%3A%2F%2Fmachinelearningcoban.com%2F2017%2F01%2F08%2Fknn%2F&amp;layout=button_count&amp;locale=en_US&amp;mobile_iframe=true&amp;sdk=joey&amp;size=small"><span style="vertical-align: bottom; width: 81px; height: 20px;"><iframe name="f1e5a990b959d4c" width="1000px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" title="fb:share_button Facebook Social Plugin" src="./Machine Learning cơ bản 6_files/share_button.html" style="border: none; visibility: visible; width: 81px; height: 20px;" class=""></iframe></span></div>
+
+
+    <!-- Twitter -->
+    <!-- <a href="https://twitter.com/intent/tweet?text=Bài 6: K-nearest neighbors&url=https://machinelearningcoban.com/2017/01/08/knn/&via=&related=" rel="nofollow" target="_blank" title="Share on Twitter" width="25" ><img src = "/assets/images/twitter.png" width="25"></a> -->
+
+    <!-- Google -->
+    <!-- <a href="https://plus.google.com/share?url=https://machinelearningcoban.com/2017/01/08/knn/" rel="nofollow" target="_blank" title="Share on Google+"><img src = "/assets/images/google.png" width="25"></a> -->
+
+    
+    <!-- LinkedIn -->
+    <!-- <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https://machinelearningcoban.com/2017/01/08/knn/" target="_blank"> <img src="/assets/images/linkedin.png" alt="LinkedIn" width="25"/> -->
+    <!-- </a> -->
+
+    <!-- Email -->
+    <a href="mailto:?Subject=Simple%20Share%20Buttons&amp;Body=I%20saw%20this%20and%20thought%20of%20you!%20%20https://machinelearningcoban.com/2017/01/08/knn/">
+        <img src="./Machine Learning cơ bản 6_files/email.png" alt="Email" width="25">
+    </a>
+    <!-- Print -->
+    <a href="javascript:;" onclick="window.print()">
+        <img src="./Machine Learning cơ bản 6_files/print.png" alt="Print" width="25">
+    </a>
+   </div>
+          </aside>
+          
+           <nav>
+            <div class="header">Diễn đàn</div>
+            <a href="https://forum.machinelearningcoban.com/">
+            <img width="100%" src="./Machine Learning cơ bản 6_files/new_logo9-2.png">  </a>
+          </nav>
+          
+          <nav>
+            <div class="header">Interactive Learning</div>
+            <a href="https://fundaml.com/">
+            <img width="100%" src="./Machine Learning cơ bản 6_files/fundaml_web.png">  </a>
+          </nav>
+
+          <nav>
+          <div class="header" with="100%">Facebook page</div>
+          <!-- <a href = "https://www.facebook.com/machinelearningbasicvn/" target="_blank" title="Follow us"><img src = "/assets/images/facebook.png" width="30"></a> -->
+          <!-- facebook page -->
+
+         <div class="fb-page fb_iframe_widget" data-href="https://www.facebook.com/machinelearningbasicvn/" data-width="250" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false" fb-xfbml-state="rendered" fb-iframe-plugin-query="adapt_container_width=true&amp;app_id=&amp;container_width=132&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2Fmachinelearningbasicvn%2F&amp;locale=en_US&amp;sdk=joey&amp;show_facepile=false&amp;small_header=false&amp;width=250"><span style="vertical-align: bottom; width: 180px; height: 130px;"><iframe name="f1f4a57c4db4cd8" width="250px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" title="fb:page Facebook Social Plugin" src="./Machine Learning cơ bản 6_files/page.html" style="border: none; visibility: visible; width: 180px; height: 130px;" class=""></iframe></span></div>
+          <!--end facebook page -->
+
+          </nav>
+          <nav>
+            <div class="header">Facebook group</div>
+            <a href="https://www.facebook.com/groups/257768141347267/">
+            <img width="100%" src="./Machine Learning cơ bản 6_files/multi_layers.png">  </a>
+          </nav>
+          
+
+
+          <nav>
+
+          <div class="header">Recommended books</div>
+            <ul>
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=1&amp;cad=rja&amp;uact=8&amp;ved=0ahUKEwjd7Y_Q-tzTAhVISyYKHUXyCekQFggvMAA&amp;url=http%3A%2F%2Fusers.isr.ist.utl.pt%2F~wurmd%2FLivros%2Fschool%2FBishop%2520-%2520Pattern%2520Recognition%2520And%2520Machine%2520Learning%2520-%2520Springer%2520%25202006.pdf&amp;usg=AFQjCNEVQzQ_dEpxG4P7NamTWUXnVXzCng&amp;sig2=H1WVtom4rq3uh8UfbGX4oA">"Pattern recognition and Machine Learning.", C. Bishop </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://github.com/tpn/pdfs/blob/master/The%20Elements%20of%20Statistical%20Learning%20-%20Data%20Mining%2C%20Inference%20and%20Prediction%20-%202nd%20Edition%20(ESLII_print4).pdf">"The Elements of Statistical Learning", T. Hastie et al.  </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://www.computervisionmodels.com/">"Computer Vision:  Models, Learning, and Inference", Simon J.D. Prince </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://stanford.edu/~boyd/cvxbook/">"Convex Optimization", Boyd and Vandenberghe</a></li>
+
+            </ul>
+          </nav>
+
+          <nav>
+          <div class="header">Recommended courses</div>
+
+          <ul>
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.coursera.org/learn/machine-learning?utm_source=gg&amp;utm_medium=sem&amp;campaignid=693373197&amp;adgroupid=36745103515&amp;device=c&amp;keyword=machine%20learning%20andrew%20ng&amp;matchtype=e&amp;network=g&amp;devicemodel=&amp;adpostion=1t1&amp;creativeid=156061453588&amp;hide_mobile_promo&amp;gclid=Cj0KEQjwt6fHBRDtm9O8xPPHq4gBEiQAdxotvNEC6uHwKB5Ik_W87b9mo-zTkmj9ietB4sI8-WWmc5UaAi6a8P8HAQ">"Machine Learning", Andrew Ng </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://web.stanford.edu/class/cs224n/">CS224n: Natural Language Processing with Deep Learning</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://cs231n.stanford.edu/">CS231n: Convolutional Neural Networks for Visual Recognition</a></li>           
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://web.stanford.edu/class/cs246/">CS246: Mining Massive Data Sets</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://web.stanford.edu/class/cs20si/syllabus.html">CS20SI: Tensorflow for Deep Learning Research </a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.edx.org/course/introduction-computer-science-mitx-6-00-1x-10">Introduction to Computer Science and Programming Using Python</a></li>           
+
+            </ul>
+          </nav>
+
+          <nav>
+          <div class="header">Others</div>
+          <ul>
+              <li> <a style="text-align: left; color: #074B80;" href="https://github.com/ZuzooVn/machine-learning-for-software-engineers">Top-down learning path: Machine Learning for Software Engineers</a></li>
+              
+              <li> <a style="text-align: left; color: #074B80;" href="https://machinelearningcoban.com/2017/02/02/howdoIcreatethisblog/">Blog này được tạo như thế nào?</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://thepresentwriter.com/chung-toi-da-apply-va-hoc-tien-si-nhu-the-nao-phan-1/">Chúng tôi đã apply và học tiến sỹ như thế nào? (1/2)</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://thepresentwriter.com/chung-toi-da-apply-va-hoc-tien-si-nhu-the-nao-phan-2/">Chúng tôi đã apply và học tiến sỹ như thế nào? (2/2)</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="http://machinelearningmastery.com/inspirational-applications-deep-learning/">8 Inspirational Applications of Deep Learning</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://ccrma.stanford.edu/~dattorro/matrixcalc.pdf">Matrix calculus</a></li>
+
+              <li> <a style="text-align: left; color: #074B80;" href="https://github.com/aymericdamien/TensorFlow-Examples">TensorFlow-Examples</a></li>
+              
+              <li> <a style="text-align: left; color: #074B80;" href="https://www.forbes.com/sites/quora/2017/04/05/eight-easy-steps-to-get-started-learning-artificial-intelligence/#53c29fa5b117">Eight Easy Steps To Get Started Learning Artificial Intelligence</a></li>
+              <li> <a style="text-align: left; color: #074B80;" href="https://adeshpande3.github.io/adeshpande3.github.io/The-9-Deep-Learning-Papers-You-Need-To-Know-About.html">The 9 Deep Learning Papers You Need To Know About</a></li>
+
+                     
+
+            </ul>
+          </nav>
+          <!-- <img style = "transform: scaleX(1); width:100%; margin-left:00px;position: absolute;" src = "/images/mai.jpg"> -->
+         
+         <!--   
+            <nav>
+              <div class="header">Previous by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #074B80;" href="/2017/01/04/kmeans2/">Bài 5: K-means Clustering: Simple Applications</a></li>
+              </ul>
+            </nav>
+           
+           
+            <nav>
+              <div class="header">Next by date</div>
+              <ul>
+                <li><a style="text-align: left; font-family: 'Roboto Condensed', sans-serif; color: #204081;" href="/2017/01/12/gradientdescent/">Bài 7: Gradient Descent (phần 1/2)</a></li>
+              </ul>
+            </nav>
+            -->
+	        <!-- <img style = "transform: scaleX(1); width:250%; margin-left:-100px;" src = "/images/dao.jpg"> -->
+	        <!-- <a href ="https://www.facebook.com/masspvn/?fref=nf&pnref=story">MaSSP</a> -->
+	        </div>
+      	</div>
+    </div><iframe style="display: none;" src="./Machine Learning cơ bản 6_files/saved_resource(5).html"></iframe>
+
+
+
+</body></html>
